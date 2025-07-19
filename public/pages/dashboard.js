@@ -9,7 +9,7 @@ fetch('/api/session', {
   })
   .catch(err => {
     alert("You must log in first.");
-    window.location.href = "../login/login.html";
+    window.location.href = "../login";
   });
 
 let selectedDate = new Date();
@@ -64,7 +64,7 @@ document.getElementById('logoutButton').addEventListener('click', async () => {
     });
 
     // Redirect to login page
-    window.location.href = '/pages/login/login.html';
+    window.location.href = '../login';
   } catch (err) {
     alert('Logout failed. Please try again.');
   }

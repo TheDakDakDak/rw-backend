@@ -4,7 +4,6 @@ const { Pool } = require('pg'); //PostgreSQL connection manager
 const session = require('express-session'); //for sessions
 const path = require('path'); //for path handling
 const pgSession = require('connect-pg-simple')(session); //for storing sessions in the database
-const cors = require('cors'); //allows front and back ends to talk to each other coming from different origins
 const express = require('express'); //for express app
 const app = express(); //creates an instance of an express app
 
@@ -15,14 +14,11 @@ const db = new Pool({
 });
 
 // ============ MIDDLEWARE ============
-//So front and back end can talk coming from different origins
-app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
-}));
-
 //Parses json body of incoming requests
 app.use(express.json());
+
+//Configures root folder for static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 //Configure session management using PostgreSQL as the session store.
 //Stores session data in the session table and attaches req.session to each request.
@@ -252,9 +248,6 @@ app.delete('/api/deleteSet/:id', async (req, res) => {
     res.status(500).json({ message: 'Failed to delete set' });
   }
 });
-
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

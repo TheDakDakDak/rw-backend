@@ -51,7 +51,7 @@ document.getElementById('submitButton').addEventListener('click', async () => {
       alert(result.error || "Signup failed.");
     } else {
       alert("Signup successful! You can now log in.");
-      window.location.href = "../login/login.html";
+      window.location.href = "../login";
     }
   } catch (error) {
     console.error("Signup error:", error);
