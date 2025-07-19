@@ -1,0 +1,227 @@
+body {
+	display: flex;
+	box-sizing: border-box;
+	flex-direction: column;
+	background: black;
+	margin: 0.1vh;
+	padding: 0.1vh;
+	font-family: "Krona One"
+}
+
+header {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	gap: 0.5vw;
+	height: 12.5vh;
+	background: #e2e3dd;
+	border-bottom: 3px solid #46c53b;
+}
+
+nav {
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-end;
+	border-top: 2px solid #f7cd16;
+	height: 5vh;
+}
+
+nav li {
+	border-bottom: 3px solid #46c53b;
+}
+
+#logo {
+	height: 100%;
+}
+
+#mainImage {
+	height: 80%;
+	margin-left: 10%;
+	margin-bottom: 1.5%;
+}
+
+.sectionImage {
+	height: 80%;
+	margin-right: 10%;
+}
+
+}
+
+h1 {
+		font-family: "Krona One";
+		color: #032409;
+		font-size: 2.3vw;
+}
+
+nav ul {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	list-style-type: none;
+	margin: 1vh;
+	width: 30vw;
+}
+
+a:link {
+	color: #46c53b;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:hover {
+	color: #f7cd16;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+a:visited {
+	color: #46c53b;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+main {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10vw;
+	height: 78vh;
+	border-bottom: 4px solid #46c53b;
+}
+
+section {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10vw;
+	height: 55vh;
+	border-top: 3px solid #f7cd16;
+	border-bottom: 4px solid #46c53b;
+}
+
+.sectionHeading {
+	font-size: 3.5vw;
+	color: white;
+	text-align: center;
+	margin-right: 10%;
+}
+
+footer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	height: 8vh;
+	background: #46c53b;
+	border-top: 3px solid #f7cd16;
+	background: #e2e3dd;
+}
+
+footer ul {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	align-items: center;
+	width: 50vw;
+	font-size: 14px;
+	list-style-type: none;
+	
+}
+
+span {
+	color: black;
+	font-size: 14px;
+	font-weight: bold;
+	margin-left: 10vw;
+}
+
+main > div > h2 {
+	font-size: 25px;
+}
+
+h3 {
+	color: white;
+}
+
+section > div {
+	color: white;
+	margin-left: 10%;
+}
+
+main > div {
+	color: white;
+	margin-right: 10%;
+	font-size: 16px;
+}
+
+#linkPreview {
+	display: none;
+}
+
+@media screen AND (max-width: 500px) {
+header {
+	height: 9vh;
+}
+#logo {
+	height: 75%;
+}
+
+#mainImage {
+	height: 50%;
+	margin-top: 10%;
+	margin-right: 8%;
+}
+
+h1 {
+	font-size: 4vw;
+}
+
+nav ul {
+	width: 70vw;
+	margin-right: 13vw;
+}
+
+main {
+	flex-direction: column;
+	justify-content: flex-start;
+	height: 84vh;
+}
+
+main > div {
+	color: white;
+	font-size: 16px;
+	margin-right: 0;
+	text-align: center;
+}
+
+section {
+	display: none;
+}
+
+footer ul {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 50vw;
+	font-size: 10px;
+	list-style-type: none;
+	
+}
+
+#linkPreview {
+	display: block;
+	font-size: 10px;
+}
+
+header > h1 {
+	margin-right: 2vw;
+}
+
+header > img {
+	margin-right: 2vw;
+}
+
+
+	
+}

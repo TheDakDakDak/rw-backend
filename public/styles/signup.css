@@ -1,0 +1,87 @@
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	box-sizing: border-box;
+	background: #e2e3dd;
+	min-height: 100vh;
+	font-family: "Krona One";
+}
+
+main {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 40vw;
+	height: 60vh;
+	padding-top: 0;
+}
+
+h1 {
+	text-align: center;
+	text-decoration: underline;
+	font-size: 32px;
+	font-weight: bold;
+	margin-top: 0;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 20vw;
+	gap: 8px;
+}
+
+.inputField {
+	width: 100%;
+}
+
+#submitButton:hover {
+	cursor: pointer;
+}
+
+#notImplemented {
+	display: none;
+	width: 70%;
+	margin-left: 10%;
+	color: red;
+}
+
+#submitButton {
+	padding: 10px 70px;
+	margin-top: 10px;
+	border: 2px solid #f7cd16;
+	background: #46c53b;
+	color: white;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+	font-weight: bold;
+	font-size: 16px;
+	border-radius: 30px;
+}
+
+img {
+	width: 5vw;
+}
+
+@media screen AND (max-width: 500px) {
+main {
+	width: 80%;
+}
+
+form {
+	width: 80%;
+	gap: 1vh;
+}
+
+img {
+	width: 20vw;
+}
+
+#notImplemented {
+	display: none;
+	width: 70%;
+	margin-left: 10%;
+	color: red;
+}
+}

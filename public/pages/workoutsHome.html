@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@100..900&family=Krona+One&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="../styles/workoutsHome.css">
+	<title>Rainstorm Weights</title>
+</head>
+<body>
+	<header>
+		<div class="todayContainer">
+			<span id="arrowLeft"><</span>
+			<span id="today">Today</span>
+			<span id="arrowRight">></span>
+			<img id="calendar" src="../media/images/calendarIcon.png">
+		</div>
+		<div class="logoContainer">
+			<img src="../media/images/rainstormweightslogo_transparent.png">
+		</div>
+		<div class="addWorkoutPlus">
+			<img id="plussignclass" title="Add a new exercise to this workout." src="../media/images/plussign.jpg">
+		</div>
+		<div>
+			<form>
+				<input id="logoutButton" type="button" value="Log Out">
+			</form>
+		</div>
+	</header>
+	<main>
+		<h2>You haven't logged any workouts today.</h2>
+		<form>
+			<input id="startWorkoutButton" type="button" value="Start New Workout">
+		</form>
+	</main>
+	<div id="exerciseSummaryContainer"></div>
+	<!--Modals -->
+	<div class="modal" id="modalContainer">
+		<div id="modalWindow">
+			<img class="close" src="../media/images/closeIcon.png">
+			<div id="bodyPartSelect">
+				<h3>Select Muscle Group</h3>
+				<ul>
+					<li class="body-part" data-part="chest">Chest</li>
+					<li class="body-part" data-part="back">Back</li>
+					<li class="body-part" data-part="shoulders">Shoulders</li>
+					<li class="body-part" data-part="biceps">Biceps</li>
+					<li class="body-part" data-part="triceps">Triceps</li>
+					<li class="body-part" data-part="forearms">Forearms</li>
+					<li class="body-part" data-part="legs">Legs</li>
+					<li class="body-part" data-part="abs">Abs</li>
+				</ul>
+			</div>
+			<div id="exerciseSelect" style="display: none;">
+				<h3>Select Exercise</h3>
+				<ul id="exerciseList"></ul>
+				<button id="backButton">Back</button>
+			</div>
+			<div id="repsForm" style="display: none;">
+				<h3 id="exerciseHeading">Exercise Name</h3>
+				<form>
+					<label>Reps: <input type="number" id="repsInput"></label>
+					<label>Weight: <input type="number" id="weightInput"></label>
+					<input type="button" id="saveSet" value="Save Set">
+		        </form>
+				<button id="backToExercises" type="button">Back</button>
+			</div>
+		</div>
+	</div>
+	<div id="toast" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+	background:#333; color:white; padding:10px 20px; border-radius:5px; z-index:999;"></div>
+	<div class="modal2" id="calendarContainer">
+		<div id="calendarWindow">
+			<img class="close" src="../media/images/closeIcon.png">
+			<h3>Enter Date:</h3>
+			<form>
+				<input type="date" id="dateData" class="dateDataClass">
+				<br>
+				<input type="button" id="calendarButton" value="Submit">
+			</form>
+		</div>
+	</div>
+	<!--End Modals -->
+	<script type="text/javascript" src="workoutsHome.js"></script>
+</body>
+</html>

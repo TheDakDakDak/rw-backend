@@ -1,0 +1,343 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	font-family: "Krona One";
+}
+
+body {
+	background: #e2e3dd;
+}
+/*HEADER ITEMS*/
+header {
+	display: flex;
+	justify-content: flex-start;
+	background: black;
+	height: 7vh;
+	border-bottom: 2px solid #46c53b;
+}
+
+#startWorkoutButton:hover {
+	cursor: pointer;
+}
+
+.todayContainer {
+	display: flex;
+	width: 47%;
+	justify-content: flex-start;
+	align-items: center;
+	margin-left: 1vw;
+}
+
+.logoContainer {
+	width: 43%;
+}
+
+.addWorkoutPlus {
+	width: 10%;
+}
+
+#plussignclass {
+	height: 65%;
+	margin-top: 5%;
+	margin-left: 70%;
+}
+
+#plussignclass:hover {
+	cursor: pointer;
+}
+
+header div + div > img {
+	height: 100%;
+}
+
+#today {
+	color: white;
+	font-weight: bold;
+	margin: 0 2vw 0 2vw;
+}
+
+
+#arrowLeft, #arrowRight {
+	color: white;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+#arrowLeft:hover, #arrowRight:hover, #calendar:hover {
+	cursor: pointer;
+}
+
+#calendar {
+	height: 50%;
+	margin-left: 1vw;
+}
+
+/*Main Container*/
+main {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-top: 2px solid #f7cd16;
+	background: #e2e3dd;
+	height: 93vh;
+}
+
+main > h2 {
+	color: #46c53b;
+	font-size: 24px;
+}
+
+#startWorkoutButton {
+	padding: 10px 70px;
+	margin-top: 3vh;
+	border: 2px solid #f7cd16;
+	background: #46c53b;
+	color: white;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+	font-size: 16px;
+	border-radius: 30px;
+}
+
+/*Modal for workout entry*/
+.modal {
+	display: none;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0,0,0,0.4);
+}
+
+#modalWindow {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 5vh;
+	width: 50vw;
+	height: 86vh;
+	background: #e2e3dd;
+	border-radius: 12px;
+	border: 3px solid #46c53b;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+h2 + p {
+	color: red;
+}
+
+
+/*Modal for date entry*/
+.modal2 {
+	display: none;
+	justify-content: flex-start;
+	align-items: flex-start;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(0,0,0,0.4);
+}
+
+#calendarWindow {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2vh;
+	width: 25vw;
+	height: 50vh;
+	background: #e2e3dd;
+	border-radius: 12px;
+	border: 3px solid #46c53b;
+	color: black;
+	box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+
+.dateSelect {
+	margin-bottom: 1vh;
+}
+
+#calendarWindow > form {
+	height: 75%;
+	text-align: center;
+}
+
+#daySelect {
+	width: 20%;
+}
+
+#calendarButton {
+	height: 10%;
+	width: 50%;
+	margin-top: 2vh;
+	border: 2px solid #f7cd16;
+	background: #46c53b;
+	color: white;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+	font-size: 12px;
+	border-radius: 30px;
+}
+
+/*Close buttons*/
+.close, .close2 {
+	width: 1.5vw;
+	margin: 1vw 1vw 0 0;
+	align-self: flex-end;
+}
+
+.close:hover, .close2:hover {
+  cursor: pointer;
+}
+
+#bodyPartSelect ul, #exerciseSelect ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#bodyPartSelect li, #exerciseList li {
+  padding: 10px;
+  margin: 5px;
+  background-color: #46c53b;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 16px;
+}
+
+#bodyPartSelect li:hover, #exerciseList li:hover {
+  background-color: #3aa92f;
+}
+
+#backButton {
+  margin-top: 2vh;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: 2px solid #f7cd16;
+  background: #46c53b;
+  color: white;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+#exerciseSummaryContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.exercise-box {
+  border: 3px solid black;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+#repsForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2vh;
+  padding: 20px;
+}
+
+#repsForm h3 {
+  font-size: 18px;
+}
+
+#repsForm label {
+  display: block;
+  margin: 10px 0;
+  font-size: 16px;
+  color: black;
+}
+
+#repsForm input[type="number"] {
+  padding: 8px;
+  width: 80px;
+  margin-left: 10px;
+  border: 2px solid #46c53b;
+  border-radius: 6px;
+}
+
+#saveSet {
+  padding: 10px 40px;
+  font-size: 16px;
+  border: 2px solid #f7cd16;
+  background: #46c53b;
+  color: white;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+
+#backToExercises {
+  margin-top: 2vh;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: 2px solid #f7cd16;
+  background: #46c53b;
+  color: white;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+
+
+
+@media screen AND (max-width:500px) {
+.todayContainer {
+	order: 2;
+	width: 67%;
+}
+
+.logoContainer {
+	order: 1;
+	width: 33%;
+}
+
+#today {
+	margin: 0 4vw 0 4vw;
+}
+
+#calendar {
+	margin-left: 4vw;
+}
+
+main > h2 {
+	font-size: 3.5vw;
+}
+
+#modalWindow {
+	width: 92vw;
+}
+
+h2 + p {
+	font-size: 80%;
+}
+
+.modal2 {
+	justify-content: center;
+	align-items: center;
+}
+
+#calendarWindow {
+	width: 92vw;
+}
+
+#close, #close2 {
+	width: 4vw;
+	margin: 3vw 3vw 0 0;
+	align-self: flex-end;
+}
+}
