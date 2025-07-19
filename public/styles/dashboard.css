@@ -16,38 +16,51 @@ header {
 	border-bottom: 2px solid #46c53b;
 }
 
-#startWorkoutButton:hover {
+#startWorkoutButton:hover, #logoutButton:hover {
 	cursor: pointer;
 }
 
-.todayContainer {
+#todayContainer {
 	display: flex;
-	width: 47%;
+	width: 40vw;
 	justify-content: flex-start;
 	align-items: center;
 	margin-left: 1vw;
+	background: black;
+}
+#logoContainer {
+	width: 30vw;
 }
 
-.logoContainer {
-	width: 43%;
-}
-
-.addWorkoutPlus {
-	width: 10%;
+#logoutButtonContainer {
+	width: 10vw;
 }
 
 #plussignclass {
-	height: 65%;
-	margin-top: 5%;
-	margin-left: 70%;
+	height: 3.5vh;
+	margin-top: 0.25vh;
+	margin-left: 1vw;
 }
 
 #plussignclass:hover {
 	cursor: pointer;
 }
 
-header div + div > img {
-	height: 100%;
+#logoutButton {
+	margin-top: 1.9vh;
+	margin-left: 22vw;
+	border: 2px solid #f7cd16;
+	background: #46c53b;
+	color: white;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+	border-radius: 30px;
+	height: 3vh;
+	font-size: 1.5vh
+}
+
+#logoContainer > img {
+	height: 7vh;
+	margin-left: 6vw;
 }
 
 #today {
@@ -174,7 +187,6 @@ h2 + p {
 
 #calendarButton {
 	height: 10%;
-	width: 50%;
 	margin-top: 2vh;
 	border: 2px solid #f7cd16;
 	background: #46c53b;
@@ -294,14 +306,13 @@ h2 + p {
 
 
 
-
 @media screen AND (max-width:500px) {
-.todayContainer {
+#todayContainer {
 	order: 2;
 	width: 67%;
 }
 
-.logoContainer {
+#logoContainer {
 	order: 1;
 	width: 33%;
 }

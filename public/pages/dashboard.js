@@ -258,6 +258,9 @@ async function displayTodaysWorkout() {
   
   currentWorkout.workout.forEach(entry => {
     const box = document.createElement("div");
+	box.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.5)";
+	box.style.background = "black";
+	box.style.border = "2px solid white";
     box.classList.add("exercise-box");
 
     const headingContainer = document.createElement("div");
@@ -268,10 +271,12 @@ async function displayTodaysWorkout() {
 	const heading = document.createElement("h3");
 	heading.textContent = entry.exercise;
 	heading.style.margin = "0";
+	heading.style.color = "white";
+	heading.style.textDecoration = "underline";
 
 	const addSetBtn = document.createElement("button");
 	addSetBtn.textContent = "+";
-	addSetBtn.style.backgroundColor = "green";
+	addSetBtn.style.backgroundColor = "#46c53b";
 	addSetBtn.style.color = "white";
 	addSetBtn.style.border = "none";
 	addSetBtn.style.padding = "2px 8px";
@@ -306,6 +311,7 @@ async function displayTodaysWorkout() {
     entry.sets.forEach((set, setIndex) => {
       const p = document.createElement("p");
       p.textContent = `${setCount}: ${set.weight}lbs, ${set.reps} reps`;
+	  p.style.color = "white";
 
       const delBtn = document.createElement("button");
       delBtn.textContent = "-";
