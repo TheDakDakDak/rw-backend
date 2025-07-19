@@ -7,7 +7,15 @@ fetch('/api/session', {
     }
     return res.json();
   })
+  .then(data => {
+    if (!data || !data.user) {
+      throw new Error("No session user found");
+    }
+    // Optionally: display user info here
+    console.log("User is logged in:", data.user.username || data.user.email || data.user.id);
+  })
   .catch(err => {
+    console.warn("Session check failed:", err);
     alert("You must log in first.");
     window.location.href = "../login";
   });
