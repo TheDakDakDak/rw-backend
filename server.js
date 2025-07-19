@@ -51,9 +51,9 @@ app.get('/api/session', (req, res) => {
 });
 
 //Testing to ensure backend is running. Unimportant for app functionality.
-app.get('/', (req, res) => {
-  res.send('Workout Tracker Backend is running!');
-});
+//app.get('/', (req, res) => {
+//  res.send('Workout Tracker Backend is running!');
+//});
 
 //Gets today's workout and creates an empty workout if none exist
 app.get('/api/getWorkout', async (req, res) => {
