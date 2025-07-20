@@ -150,6 +150,7 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
   displayTimeoutId = setTimeout(() => {
     displayTodaysWorkout();
   }, 200);
+  document.querySelector(".modal").style.display = "none";
   showToast(`Set Saved!`);
   });
 
@@ -310,7 +311,11 @@ async function displayTodaysWorkout() {
 
     entry.sets.forEach((set, setIndex) => {
       const p = document.createElement("p");
-      p.textContent = `${setCount}: ${set.weight}lbs, ${set.reps} reps`;
+      const formattedWeight = Number(set.weight) % 1 === 0
+	  ? Number(set.weight).toFixed(0)
+	  : Number(set.weight).toFixed(1);
+
+      p.textContent = `${setCount}: ${formattedWeight}lbs, ${set.reps} reps`;
 	  p.style.color = "white";
 
       const delBtn = document.createElement("button");
