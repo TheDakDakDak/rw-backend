@@ -8,29 +8,29 @@
 	<title>Rainstorm Weights</title>
 </head>
 <body>
-	<h3>Profile and Settings</h3>
+	<h3><a href="../dashboard"><img id="goback" src="../media/images/blackbackbutton.jpg"></a>Profile and Settings</h3>
 	<div id="usernameBox" class="boxes">
 		<h5>Change Username</h5>
 		<span>Current Username:</span>
-		<span id="currentUserName"><i>Undefined</i></span>
+		<span id="currentUsername"><i></i></span>
 		<form>
 			<span>New Username:</span>
 			<input id="newUsername" type="text" placeholder="Change username">
 		</form>
 		<form class="buttonForm">
-			<input id="usernameButton" type="button" class="button" value="Save Changes">
+			<input id="saveUsername" type="button" value="Save Changes">
 		</form>
 	</div>
 	<div id="emailBox" class="boxes">
 		<h5>Change Email</h5>
 		<span>Current Email:</span>
-		<span id="currentEmail"><i>Undefined</i></span>
+		<span id="currentEmail"><i></i></span>
 		<form>
 			<span>New Email:</span>
 			<input id="newEmail" type="email" placeholder="Change email">
 		</form>
 		<form class="buttonForm">
-			<input id="usernameButton" type="button" class="button" value="Save Changes">
+			<input id="saveEmail" type="button" value="Save Changes">
 		</form>
 	</div>
 	<div id="passwordBox" class="boxes">
@@ -48,6 +48,9 @@
 			<input id="confirmPassword" type="password" placeholder="Confirm new password">
 		</form>
 		<form class="buttonForm">
-			<input id="usernameButton" type="button" class="button" value="Save Changes">
+			<input id="savePassword" type="button" value="Save Changes">
 		</form>
 	</div>
+	<script type="text/javascript" src="../pages/profile.js"></script>
+</body>
+</html>

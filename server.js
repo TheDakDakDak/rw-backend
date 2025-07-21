@@ -46,6 +46,29 @@ app.get('/api/session', (req, res) => {
   }
 });
 
+app.get('/api/getUserInfo', async (req, res) => {
+  console.log("GET /api/getUserInfo called");
+  if (!req.session.user) {
+    return res.status(401).json({ message: 'Not authenticated' });
+  }
+
+  try {
+    const result = await db.query(
+      'SELECT username, email FROM users WHERE id = $1',
+      [req.session.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error('Error in /api/getUserInfo:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 //Testing to ensure backend is running. Unimportant for app functionality.
 //app.get('/', (req, res) => {
 //  res.send('Workout Tracker Backend is running!');
@@ -165,6 +188,65 @@ app.post('/api/logout', (req, res) => {
     res.json({ message: 'Logged out successfully' });
   });
 });
+
+app.post('/api/updateUsername', async (req, res) => {
+  if (!req.session.user || !req.session.user.id) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const { newUsername } = req.body;
+
+  if (newUsername) {
+      await db.query('UPDATE users SET username = $1 WHERE id = $2', [newUsername, req.session.user.id]);
+	  res.status(200).json({ message: 'Username updated successfully' });
+  }
+  else {
+	  return res.json({message: 'An error occurred'});
+  }
+});
+
+app.post('/api/updateEmail', async (req, res) => {
+  if (!req.session.user || !req.session.user.id) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+  const { newEmail } = req.body;
+  if (newEmail) {
+      await db.query('UPDATE users SET email = $1 WHERE id = $2', [newEmail, req.session.user.id]);
+	  res.status(200).json({ message: 'Email updated successfully' });
+  }
+  else {
+	  return res.json({message: 'An error occurred'});
+  }
+});
+
+app.post('/api/updatePassword', async (req, res) => {
+  if (!req.session.user || !req.session.user.id) {
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
+  const { currentPassword, newPassword } = req.body;
+
+
+  const result = await db.query('SELECT password FROM users WHERE id = $1', [req.session.user.id]);
+  const hashedPassword = result.rows[0].password;
+
+  if (newPassword) {
+    const valid = await bcrypt.compare(currentPassword, hashedPassword);
+    if (!valid) {
+      return res.status(403).json({ message: 'Current password incorrect. Nothing updated' });
+    }
+
+    const newHashedPassword = await bcrypt.hash(newPassword, 10);
+    await db.query('UPDATE users SET password = $1 WHERE id = $2', [newHashedPassword, req.session.user.id]);
+  }
+  else {
+	  return res.status(500).json({ message: 'Failed to update password'});
+  }
+
+  res.status(200).json({ message: 'User info updated successfully' });
+
+});
+
+
 
 app.post('/api/saveWorkout', async (req, res) => {
   const { date, workout } = req.body;

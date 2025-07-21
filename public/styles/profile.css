@@ -28,7 +28,7 @@ form {
 	margin-top: 1vh;
 }
 
-.button {
+#saveUsername, #savePassword, #saveEmail {
 	display: block;
 	margin: 0 auto;
 	background: #e2e3dd;
@@ -36,10 +36,23 @@ form {
 	border-radius: 30px;
 }
 
-.button:hover {
+#saveUsername, #savePassword, #saveEmail:hover {
 	cursor: pointer;
 }
 
 #newUsername, #newEmail, #currentPassword, #newPassword, #confirmPassword {
 	border-radius: 30px;
+}
+
+#goback {
+	width: 1.25vw;
+	margin-right: 32vw;
+}
+
+#goback.hover {
+	cursor: pointer;
+}
+
+h3 {
+	margin-right: 32vw;
 }

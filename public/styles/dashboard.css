@@ -33,7 +33,7 @@ header {
 }
 
 #logoutButtonContainer {
-	width: 10vw;
+	width: 30vw;
 }
 
 #plussignclass {
@@ -42,25 +42,23 @@ header {
 	margin-left: 1vw;
 }
 
-#plussignclass:hover {
+#plussignclass:hover, #profileIcon:hover {
 	cursor: pointer;
 }
 
-#logoutButton {
-	margin-top: 1.9vh;
+#profileIcon {
+	height: 6.5vh;
 	margin-left: 22vw;
-	border: 2px solid #f7cd16;
-	background: #46c53b;
-	color: white;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-	border-radius: 30px;
-	height: 3vh;
-	font-size: 1.5vh
+}
+
+#logoutButton {
+	height: 4.75vh;
+	margin-bottom: 0.6vh;
 }
 
 #logoContainer > img {
 	height: 7vh;
-	margin-left: 6vw;
+	margin-left: 7vw;
 }
 
 #today {
