@@ -46,6 +46,7 @@
 					<li class="body-part" data-part="forearms">Forearms</li>
 					<li class="body-part" data-part="legs">Legs</li>
 					<li class="body-part" data-part="abs">Abs</li>
+					<li id="addEx">Add Custom Exercise</li>
 				</ul>
 			</div>
 			<div id="exerciseSelect" style="display: none;">
@@ -62,6 +63,26 @@
 		        </form>
 				<button id="backToExercises" type="button">Back</button>
 			</div>
+			<div id="addExForm" style="display: none;">
+				<h3>Add Your Own Exercise</h3>
+				<form>
+					<label>Exercise Name: <input type="text" id="exName"></label>
+					<label>Muscle Group:
+					<select name="Muscle Group" id="exMg">
+						<option value="chest">Chest</option>
+						<option value="back">Back</option>
+						<option value="shoulders">Shoulders</option>
+						<option value="biceps">Biceps</option>
+						<option value="triceps">Triceps</option>
+						<option value="forearms">Forearms</option>
+						<option value="legs">Legs</option>
+						<option value="abs">Abs</option>
+					</select>
+					</label>
+				</form>
+				<button id="addExBtn" type="button">Add!</button><br>
+				<button id="backToMuscleGroups" type="button">Back</button>
+						
 		</div>
 	</div>
 	<div id="toast" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);

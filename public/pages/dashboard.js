@@ -29,72 +29,15 @@ let currentWorkout = {
 };
 
 let currentExercise = null;
-
-//Object containing keys mapped to lists of corresponding exercises.
-const exercisesByPart = {
-	chest: ["Bench Press", "Incline Bench Press", "Dumbbell Flyes", "Push-ups"],
-	back: ["Pull-ups", "Bent-Over Rows", "Shrugs", "Cable Rows"],
-	shoulders: ["Overhead Press", "Lateral Raises", "Front Raises", "Reverse Flyes", "Push Press"],
-	biceps: ["Bicep Curls", "Hammer Curls", "Incline Curls", "Concentration Curls"],
-	triceps: ["Dips", "Pushdowns", "Overhead Tricep Extensions", "Skullcrushers"],
-	forearms: ["Reverse Curls", "Wrist Curls", "Reverse Wrist Curls", "Farmers Walks"],
-	legs: ["Squats", "Lunges", "Leg Press", "Leg Extensions", "Leg Curls", "Calf Raises", "Deadlifts"],
-	abs: ["Sit-ups", "Crunches", "Hanging Leg Raises", "Lying Leg Raises", "Planks"]
-};
-
-const exerciseIdMap = {
-  "Bench Press": 1, "Incline Bench Press": 2, "Dumbbell Flyes": 3, "Push-ups": 4,
-  "Pull-ups": 5, "Bent-Over Rows": 6, "Shrugs": 7, "Cable Rows": 8,
-  "Overhead Press": 9, "Lateral Raises": 10, "Front Raises": 11, "Reverse Flyes": 12, "Push Press": 13,
-  "Bicep Curls": 14, "Hammer Curls": 15, "Incline Curls": 16, "Concentration Curls": 17,
-  "Dips": 18, "Pushdowns": 19, "Overhead Tricep Extensions": 20, "Skullcrushers": 21,
-  "Reverse Curls": 22, "Wrist Curls": 23, "Reverse Wrist Curls": 24, "Farmers Walks": 25,
-  "Squats": 26, "Lunges": 27, "Leg Press": 28, "Leg Curls": 29, "Leg Extensions": 30,
-  "Calf Raises": 32, "Deadlifts": 33,
-  "Sit-ups": 34, "Crunches": 35, "Hanging Leg Raises": 36, "Lying Leg Raises": 37, "Planks": 38
-};
+let currentExerciseId = null;
 
 let displayTimeoutId;
 
-// ===== EVENT LISTENERS =====
-//Shows today's workout information on page load
+//Main App Functionality
 window.addEventListener("DOMContentLoaded", () => {
   displayTodaysWorkout();
   updateDateDisplay();
 });
-
-//Logout button
-document.getElementById('logoutButton').addEventListener('click', async () => {
-  try {
-    const res = await fetch('/api/logout', {
-      method: 'POST',
-      credentials: 'include'
-    });
-
-    // Redirect to login page
-    window.location.href = '../login';
-  } catch (err) {
-    alert('Logout failed. Please try again.');
-  }
-});
-
-//Bring up the muscle group selection menu
-document.querySelector('#startWorkoutButton').addEventListener('click', workoutMenu); //Start New Workout button 
-document.querySelector('#plussignclass').addEventListener('click', workoutMenu); //Upper right corner plus sign to start an exercise.
-
-//Close (X) buttons
-document.querySelectorAll('.close').forEach(closeBtn => {
-    closeBtn.addEventListener('click', () => {
-    document.querySelector('.modal').style.display = 'none';
-    document.querySelector('.modal2').style.display = 'none';
-  });
-});
-
-//Calendar event listeners
-document.querySelector('#calendar').addEventListener('click', () => { //Calendar icon
-	document.querySelector('.modal2').style.display = 'flex';
-});
-document.querySelector('#calendarButton').addEventListener('click', dateSelect); //Date select confirmation in calendar menu.
 
 //Logic for saving a set in the set entry menu
 document.querySelector('#saveSet').addEventListener('click', async () => {
@@ -103,7 +46,7 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
   const weight = document.querySelector('#weightInput').value.trim();
 
   //Validate weight and reps values
-  if (!reps || !weight || !currentExercise) return;
+  if (!reps || !weight || !currentExercise || !currentExerciseId) return;
   if (reps <= 0 || weight < 0) {
     showToast("Please enter valid values");
     return;
@@ -132,7 +75,7 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
         date: currentWorkout.date,
         workout: [{
           exercise: currentExercise,
-          exercise_id: exerciseIdMap[currentExercise],
+          exercise_id: currentExerciseId,
           sets: [{ weight: Number(weight), reps: Number(reps) }]
         }]
       })
@@ -153,76 +96,68 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
   document.querySelector(".modal").style.display = "none";
   showToast(`Set Saved!`);
   });
-
-//Event listeners for each item in the muscle group selection buttons
-document.querySelectorAll('.body-part').forEach(item => {
-	item.addEventListener('click', () => {
-		const part = item.dataset.part;
-		showExercises(part);
-	});
-});
-
-//Back buttons
-document.querySelector('#backButton').addEventListener('click', () => { //Back button leading from the exercise select menu to the body part select menu
-  document.querySelector('#exerciseSelect').style.display = 'none';
-  document.querySelector('#bodyPartSelect').style.display = 'block';
-});
-document.querySelector('#backToExercises').addEventListener('click', () => { //Back button leading from the set entry form to the exercise select menu
-  document.querySelector('#repsForm').style.display = 'none';
-  document.querySelector('#exerciseSelect').style.display = 'block';
-});
-
-//Date arrows
-document.getElementById("arrowLeft").addEventListener("click", () => {
-  selectedDate.setDate(selectedDate.getDate() - 1);
-  updateDateDisplay();
-  displayTodaysWorkout();
-});
-document.getElementById("arrowRight").addEventListener("click", () => {
-  selectedDate.setDate(selectedDate.getDate() + 1);
-  updateDateDisplay();
-  displayTodaysWorkout();
-});
-
-// ===== FUNCTIONS =====
-//Muscle group selection menu
-function workoutMenu() {
-  //Sets currentWorkout's date based on where we are in the calendar.
-  const dateText = selectedDate.toISOString().split("T")[0];
-  currentWorkout.date = dateText;
   
-  //Displays only the body part select menu. Hides other forms.
-  document.querySelector('#bodyPartSelect').style.display = 'block';
-  document.querySelector('#exerciseSelect').style.display = 'none';
-  document.querySelector('#repsForm').style.display = 'none';
-  document.querySelector('.modal').style.display = 'flex';
-}
+  
+  
+  document.getElementById('addExBtn').addEventListener('click', async () => {
+	  const exerciseToAdd = document.getElementById('exName').value.trim();
+	  const mgOfExercise = document.getElementById('exMg').value;
+	  if(!exerciseToAdd) {
+		  alert("Please enter an exercise name.");
+		  return;
+	  }
+	  const res = await fetch('/api/addCustomExercise', {
+		  method: 'POST',
+		  headers: { 'Content-Type': 'application/json' },
+		  credentials: 'include',
+		  body: JSON.stringify({
+			  exercise1: exerciseToAdd,
+			  bodyPart1: mgOfExercise
+	      })
+	  });
+	  const data = await res.json();
+	  if(!res.ok) {
+		  alert(data.message);
+	  }
+	  else {
+		  showToast(data.message);
+	  }
+		  
+  });
 
 //Exercise selection menu
-function showExercises(part) {
-  const exerciseList = document.querySelector('#exerciseList');
-  exerciseList.innerHTML = "";
-
-  exercisesByPart[part].forEach(exercise => {
-    const li = document.createElement('li');
-    li.textContent = exercise;
-	li.addEventListener('click', () => {
-		openRepsForm(exercise);
+async function showExercises(part) {
+	const res = await fetch('/api/getExercisesByBodyPart', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({
+			part: part
+		})
 	});
-    exerciseList.appendChild(li);
+	const data = await res.json();
+	const theExercises = data.exercises;
+    const exerciseList = document.querySelector('#exerciseList');
+    exerciseList.innerHTML = "";
+	
+	theExercises
+		.sort((a, b) => a.name.localeCompare(b.name))
+		.forEach(ex => {
+			const li = document.createElement('li');
+			li.textContent = ex.name;
+			li.addEventListener('click', () => {
+				currentExercise = ex.name;
+				currentExerciseId = ex.id;
+				openRepsForm(currentExercise, currentExerciseId);
+			});
+			exerciseList.appendChild(li);
   });
+
 
   document.querySelector('#bodyPartSelect').style.display = 'none';
   document.querySelector('#exerciseSelect').style.display = 'block';
 }
 
-//Set entry menu
-function openRepsForm(exerciseName) {
-  currentExercise = exerciseName;
-  document.querySelector('#exerciseHeading').textContent = exerciseName;
-  document.querySelector('#exerciseSelect').style.display = 'none';
-  document.querySelector('#repsForm').style.display = 'block';
-}
 
 async function displayTodaysWorkout() {
   const container = document.getElementById("exerciseSummaryContainer");
@@ -242,6 +177,7 @@ async function displayTodaysWorkout() {
     }
     currentWorkout.date = dateKey;
     currentWorkout.workout = result.workout.map(e => ({
+	exercise_id: e.exercise_id,
     exercise: e.exercise,
     sets: [...e.sets]
     }));
@@ -289,6 +225,7 @@ async function displayTodaysWorkout() {
 
 	addSetBtn.addEventListener("click", () => {
 	currentExercise = entry.exercise;
+	currentExerciseId = entry.exercise_id;
 
 	// Use the currently selected date, not today's date
 	const dateText = selectedDate.toISOString().split("T")[0];
@@ -379,6 +316,87 @@ function showToast(message) {
   }, 2000); 
 }
 
+
+
+
+//Form Openers and Closers
+document.querySelector('#startWorkoutButton').addEventListener('click', workoutMenu);
+document.querySelector('#plussignclass').addEventListener('click', workoutMenu);
+
+document.getElementById("addEx").addEventListener("click", () => {
+  document.querySelector('#bodyPartSelect').style.display = 'none';
+  document.querySelector('#addExForm').style.display = 'block';
+});
+
+document.getElementById('backToMuscleGroups').addEventListener('click', () => {
+	document.querySelector('#bodyPartSelect').style.display = 'block';
+	document.querySelector('#addExForm').style.display = 'none';
+});
+	
+	
+document.querySelectorAll('.body-part').forEach(item => {
+	item.addEventListener('click', async () => {
+		const part = item.getAttribute('data-part');
+		const bodyPartSelect = document.querySelector('#bodyPartSelect');
+
+		bodyPartSelect.classList.add('fade-out');
+		showExercises(part);
+
+		setTimeout(() => {
+			bodyPartSelect.style.display = 'none';
+			bodyPartSelect.classList.remove('fade-out');
+		}, 400); // Match CSS animation duration
+	});
+});
+
+function openRepsForm(exerciseName, exerciseId) {
+  currentExercise = exerciseName;
+  currentExerciseId = exerciseId;
+  document.querySelector('#exerciseHeading').textContent = exerciseName;
+  document.querySelector('#exerciseSelect').style.display = 'none';
+  document.querySelector('#repsForm').style.display = 'block';
+}
+
+function workoutMenu() {
+  //Sets currentWorkout's date based on where we are in the calendar.
+  const dateText = selectedDate.toISOString().split("T")[0];
+  currentWorkout.date = dateText;
+  
+  //Displays only the body part select menu. Hides other forms.
+  document.querySelector('#bodyPartSelect').style.display = 'block';
+  document.querySelector('#exerciseSelect').style.display = 'none';
+  document.querySelector('#repsForm').style.display = 'none';
+  document.querySelector('.modal').style.display = 'flex';
+}
+
+document.querySelector('#backButton').addEventListener('click', () => { //Back button leading from the exercise select menu to the body part select menu
+  document.querySelector('#exerciseSelect').style.display = 'none';
+  document.querySelector('#bodyPartSelect').style.display = 'block';
+});
+document.querySelector('#backToExercises').addEventListener('click', () => { //Back button leading from the set entry form to the exercise select menu
+  document.querySelector('#repsForm').style.display = 'none';
+  document.querySelector('#exerciseSelect').style.display = 'block';
+});
+
+document.querySelectorAll('.close').forEach(closeBtn => {
+    closeBtn.addEventListener('click', () => {
+    document.querySelector('.modal').style.display = 'none';
+    document.querySelector('.modal2').style.display = 'none';
+	document.getElementById('addExForm').style.display = 'none';
+  });
+});
+
+
+
+
+
+
+//Calendar Functionality
+document.querySelector('#calendar').addEventListener('click', () => { //Calendar icon
+	document.querySelector('.modal2').style.display = 'flex';
+});
+document.querySelector('#calendarButton').addEventListener('click', dateSelect);
+
 function dateSelect() {
   const dateInput = document.querySelector('#dateData').value;
   if (!dateInput) return;
@@ -417,3 +435,31 @@ function updateDateDisplay() {
     display.textContent = selected.toLocaleDateString(undefined, options);
   }
 }
+
+document.getElementById("arrowLeft").addEventListener("click", () => {
+  selectedDate.setDate(selectedDate.getDate() - 1);
+  updateDateDisplay();
+  displayTodaysWorkout();
+});
+document.getElementById("arrowRight").addEventListener("click", () => {
+  selectedDate.setDate(selectedDate.getDate() + 1);
+  updateDateDisplay();
+  displayTodaysWorkout();
+});
+
+
+
+//Logout button
+document.getElementById('logoutButton').addEventListener('click', async () => {
+  try {
+    const res = await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+
+    // Redirect to login page
+    window.location.href = '../login';
+  } catch (err) {
+    alert('Logout failed. Please try again.');
+  }
+});

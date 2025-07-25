@@ -95,11 +95,11 @@ app.get('/api/getWorkout', async (req, res) => {
 
     const workoutId = workoutResult.rows[0].id; //assign the existing workout id to workoutId
     const setsResult = await db.query( //get all exercises with matching workoutId
-      `SELECT sets.id, exercise_id, weight, reps, set_order, name as exercise
-       FROM sets
-       JOIN exercises ON sets.exercise_id = exercises.id
-       WHERE workout_id = $1
-       ORDER BY exercise_id, set_order`,
+        `SELECT sets.id, exercise_id, weight, reps, set_order, user_exercises.name as exercise
+		FROM sets
+		JOIN user_exercises ON sets.exercise_id = user_exercises.id
+		WHERE workout_id = $1
+		ORDER BY exercise_id, set_order`,
       [workoutId]
     );
 
@@ -107,7 +107,11 @@ app.get('/api/getWorkout', async (req, res) => {
     const grouped = {};
     for (const row of setsResult.rows) {
       if (!grouped[row.exercise]) {
-        grouped[row.exercise] = { exercise: row.exercise, sets: [] };
+        grouped[row.exercise] = {
+			exercise_id: row.exercise_id,
+			exercise: row.exercise,
+			sets: [] 
+			};
       }
       grouped[row.exercise].sets.push({ id: row.id, weight: row.weight, reps: row.reps });
     }
@@ -187,6 +191,41 @@ app.post('/api/logout', (req, res) => {
     res.clearCookie('connect.sid'); // This is the default session cookie name
     res.json({ message: 'Logged out successfully' });
   });
+});
+
+app.post('/api/addCustomExercise', async (req, res) => {
+	const userId = req.session.user?.id;
+	const { exercise1, bodyPart1 } = req.body;
+	if(!userId) {
+		return res.status(400).json({ message: 'You must be logged in.' });
+	}
+	if(exercise1 && bodyPart1) {
+		await db.query('INSERT INTO user_exercises (user_id, name, body_part ) VALUES ($1, $2, $3)', [userId, exercise1, bodyPart1]);
+		return res.status(200).json({ message: 'Added successfully' });
+	}
+	else {
+		return res.json({ message: 'An error occurred.' });
+	}
+});
+
+app.post('/api/getExercisesByBodyPart', async (req, res) => {
+	const userId = req.session.user?.id;
+	const bodyPart = req.body.part;
+	if(!userId) {
+		return res.status(400).json({ message: 'You must be logged in.' });
+	}
+	if(bodyPart) {
+		try {
+			const result = await db.query('SELECT id, name FROM user_exercises WHERE user_id = $1 AND body_part = $2', [userId, bodyPart]);
+			res.json({ exercises: result.rows });
+	    } catch (err) {
+		    console.error("Error fetching by bodypart.", err);
+		    res.status(500).json({ message: "Failed to get exercises." });
+	    }
+	}
+	else {
+		return res.status(400).json({ message: 'Error sending bodypart to server'});
+	}
 });
 
 app.post('/api/updateUsername', async (req, res) => {

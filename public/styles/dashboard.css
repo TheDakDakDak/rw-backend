@@ -253,7 +253,7 @@ h2 + p {
   text-align: center;
 }
 
-#repsForm {
+#repsForm, #addExForm {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -265,14 +265,14 @@ h2 + p {
   font-size: 18px;
 }
 
-#repsForm label {
+#repsForm label, #addExForm label {
   display: block;
   margin: 10px 0;
   font-size: 16px;
   color: black;
 }
 
-#repsForm input[type="number"] {
+#repsForm input[type="number"], #addExForm input {
   padding: 8px;
   width: 80px;
   margin-left: 10px;
@@ -280,18 +280,18 @@ h2 + p {
   border-radius: 6px;
 }
 
-#saveSet {
+#saveSet, #addExBtn {
   padding: 10px 40px;
   font-size: 16px;
-  border: 2px solid #f7cd16;
+  border: 2px solid #f7cd16 !important;
   background: #46c53b;
   color: white;
-  border-radius: 30px;
+  border-radius: 30px !important;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.5);
 }
 
-#backToExercises {
+#backToExercises, #backToMuscleGroups {
   margin-top: 2vh;
   padding: 10px 20px;
   font-size: 14px;
@@ -300,6 +300,32 @@ h2 + p {
   color: white;
   border-radius: 30px;
   cursor: pointer;
+}
+
+#addEx {
+  background: black !important;
+}
+
+#addEx:hover {
+  background: #222 !important;
+}
+
+#exName {
+	width: 15vw !important;
+}
+
+/*Hide delay when querying database for exercises by muscle group*/
+@keyframes fadeOut {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+.fade-out {
+	animation: fadeOut 0.4s ease forwards;
 }
 
 
