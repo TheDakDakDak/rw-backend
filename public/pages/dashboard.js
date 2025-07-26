@@ -352,6 +352,7 @@ document.querySelectorAll('.body-part').forEach(item => {
 function openRepsForm(exerciseName, exerciseId) {
   currentExercise = exerciseName;
   currentExerciseId = exerciseId;
+  document.querySelector('#calendarWindow').style.display = 'none';
   document.querySelector('#exerciseHeading').textContent = exerciseName;
   document.querySelector('#exerciseSelect').style.display = 'none';
   document.querySelector('#repsForm').style.display = 'block';
@@ -363,6 +364,7 @@ function workoutMenu() {
   currentWorkout.date = dateText;
   
   //Displays only the body part select menu. Hides other forms.
+  document.querySelector('#calendarWindow').style.display = 'none';
   document.querySelector('#bodyPartSelect').style.display = 'block';
   document.querySelector('#exerciseSelect').style.display = 'none';
   document.querySelector('#repsForm').style.display = 'none';
@@ -381,8 +383,9 @@ document.querySelector('#backToExercises').addEventListener('click', () => { //B
 document.querySelectorAll('.close').forEach(closeBtn => {
     closeBtn.addEventListener('click', () => {
     document.querySelector('.modal').style.display = 'none';
-    document.querySelector('.modal2').style.display = 'none';
+    document.querySelector('#calendarWindow').style.display = 'none';
 	document.getElementById('addExForm').style.display = 'none';
+	document.querySelector('#repsForm').style.display = 'none';
   });
 });
 
@@ -396,8 +399,11 @@ document.querySelector('.hamburger').addEventListener('click', () => {
 
 
 //Calendar Functionality
-document.querySelector('#calendar').addEventListener('click', () => { //Calendar icon
-	document.querySelector('.modal2').style.display = 'flex';
+document.querySelector('#calendar').addEventListener('click', () => {	//Calendar icon
+  document.querySelector('#bodyPartSelect').style.display = 'none';
+  document.querySelector('#calendarWindow').style.display = 'flex';
+  document.querySelector('.modal').style.display = 'flex';
+  document.querySelectory('#repsForm').style.display = 'none';
 });
 document.querySelector('#calendarButton').addEventListener('click', dateSelect);
 
@@ -410,7 +416,7 @@ function dateSelect() {
   updateDateDisplay();
   displayTodaysWorkout();
 
-  document.querySelector('.modal2').style.display = 'none';
+  document.querySelector('.modal').style.display = 'none';
 }
 
 function updateDateDisplay() {

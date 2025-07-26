@@ -19,10 +19,6 @@
 		<div id="logoContainer">
 			<img src="../media/images/rainstormweightslogo_transparent.png">
 		</div>
-		<!--<div id="logoutButtonContainer">
-			<a href="../profile"><img id="profileIcon" src="../media/images/profileicon.jpg"></a>
-			<img id="logoutButton" src="../media/images/logoutbutton.jpg">
-		</div> -->
 		<div class="hamburger" id="hamburger">
 			☰
 		</div>
@@ -88,23 +84,19 @@
 					</label>
 				</form>
 				<button id="addExBtn" type="button">Add!</button><br>
-				<button id="backToMuscleGroups" type="button">Back</button>
-						
-		</div>
+				<button id="backToMuscleGroups" type="button">Back</button>		
+			</div>
+			<div id="calendarWindow" style="display: none;">
+				<h3>Enter Date:</h3>
+				<form>
+					<input type="date" id="dateData" class="dateDataClass">
+					<br>
+					<input type="button" id="calendarButton" value="Submit">
+				</form>
+			</div>
 	</div>
 	<div id="toast" style="display:none; position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
 	background:#333; color:white; padding:10px 20px; border-radius:5px; z-index:999;"></div>
-	<div class="modal2" id="calendarContainer">
-		<div id="calendarWindow">
-			<img class="close" src="../media/images/closeIcon.png">
-			<h3>Enter Date:</h3>
-			<form>
-				<input type="date" id="dateData" class="dateDataClass">
-				<br>
-				<input type="button" id="calendarButton" value="Submit">
-			</form>
-		</div>
-	</div>
 	<!--End Modals -->
 	<script type="text/javascript" src="../pages/dashboard.js"></script>
 </body>
