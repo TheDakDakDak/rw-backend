@@ -16,7 +16,7 @@ header {
 	border-bottom: 2px solid #46c53b;
 }
 
-#startWorkoutButton:hover, /*#logoutButton:hover*/ {
+#startWorkoutButton:hover {
 	cursor: pointer;
 }
 
@@ -269,6 +269,26 @@ h2 + p {
   border-radius: 30px !important;
   cursor: pointer;
   box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+}
+
+#addExBtn {
+  margin-bottom: 5vh;
+}
+
+#delEx {
+	margin-top: 2vh;
+}
+
+#delExBtn {
+	background: red;
+	color: white;
+	border: 2px solid black;
+	border-radius: 30px;
+	margin-bottom: 8vh;
+}
+
+#delExBtn:hover {
+	cursor: pointer;
 }
 
 #backToExercises, #backToMuscleGroups {

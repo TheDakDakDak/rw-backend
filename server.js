@@ -228,6 +228,27 @@ app.post('/api/getExercisesByBodyPart', async (req, res) => {
 	}
 });
 
+app.get('/api/getAllExercises', async (req, res) => {
+  const userId = req.session.user?.id;
+  if(!userId) {
+	return res.status(400).json({ message: 'You must be logged in.' });
+  }
+  const result = await db.query('SELECT name FROM user_exercises WHERE user_id = $1', [userId]);
+  return res.json({ exercises: result.rows });
+});
+
+app.post('/api/deleteExercise', async (req, res) => {
+	const userId = req.session.user?.id;
+	const exerciseToDelete = req.body.name;
+	if(userId && exerciseToDelete) {
+		const result = await db.query('DELETE FROM user_exercises WHERE name = $1 and user_id = $2', [exerciseToDelete, userId]);
+		return res.status(200).json({ message: `${exerciseToDelete} deleted successfully.` });
+	}
+	else {
+		return res.status(500).json({ message: 'An error occurred.' });
+	}
+});
+
 app.post('/api/updateUsername', async (req, res) => {
   if (!req.session.user || !req.session.user.id) {
     return res.status(401).json({ message: 'Unauthorized' });
@@ -335,7 +356,6 @@ app.post('/api/saveWorkout', async (req, res) => {
     res.json({ message: 'Workout saved successfully' });
   } catch (err) {
     await client.query('ROLLBACK');
-    console.error('❌ Error saving workout:', err);
     res.status(500).json({ message: 'Failed to save workout' });
   } finally {
     client.release();

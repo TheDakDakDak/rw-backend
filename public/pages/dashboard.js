@@ -11,8 +11,6 @@ fetch('/api/session', {
     if (!data || !data.user) {
       throw new Error("No session user found");
     }
-    // Optionally: display user info here
-    console.log("User is logged in:", data.user.username || data.user.email || data.user.id);
   })
   .catch(err => {
     console.warn("Session check failed:", err);
@@ -124,6 +122,52 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
 	  }
 		  
   });
+  
+document.getElementById('addEx').addEventListener('click', async () => {
+	const res = await fetch('/api/getAllExercises', {
+		method: 'GET',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+	});
+	const data = await res.json();
+	console.log(data);
+	const theExercises = data.exercises;
+	const exerciseDropdown = document.querySelector('#delEx');
+	exerciseDropdown.innerHTML = "";
+	
+	theExercises
+		.sort((a, b) => a.name.localeCompare(b.name))
+		.forEach(ex => {
+			const optionItem = document.createElement('option');
+			optionItem.textContent = ex.name;
+			optionItem.value = ex.name;
+			exerciseDropdown.appendChild(optionItem);
+		})
+});
+
+document.getElementById('delExBtn').addEventListener('click', async () => {
+	const selectionDelete = document.getElementById('delEx').value;
+	const res = await fetch('/api/deleteExercise', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({ 
+			name: selectionDelete 
+		})
+	});
+	if(res.ok) {
+		const data = await res.json();
+		showToast(data.message);
+		setTimeout(() => {
+		  document.querySelector('.modal').style.display = 'none';
+	      document.getElementById('addExForm').style.display = 'none';
+		}, 500);
+	}
+	else {
+		alert(data.message);
+	}
+});
+	
 
 //Exercise selection menu
 async function showExercises(part) {
