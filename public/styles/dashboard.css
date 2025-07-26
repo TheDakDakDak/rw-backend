@@ -16,7 +16,7 @@ header {
 	border-bottom: 2px solid #46c53b;
 }
 
-#startWorkoutButton:hover, #logoutButton:hover {
+#startWorkoutButton:hover, /*#logoutButton:hover*/ {
 	cursor: pointer;
 }
 
@@ -32,9 +32,9 @@ header {
 	width: 30vw;
 }
 
-#logoutButtonContainer {
+/*#logoutButtonContainer {
 	width: 30vw;
-}
+}*/
 
 #plussignclass {
 	height: 3.5vh;
@@ -42,19 +42,19 @@ header {
 	margin-left: 1vw;
 }
 
-#plussignclass:hover, #profileIcon:hover {
+#plussignclass:hover, /*#profileIcon:hover*/ {
 	cursor: pointer;
 }
 
-#profileIcon {
+/*#profileIcon {
 	height: 6.5vh;
 	margin-left: 22vw;
-}
+}*/
 
-#logoutButton {
+/*#logoutButton {
 	height: 4.75vh;
 	margin-bottom: 0.6vh;
-}
+}*/
 
 #logoContainer > img {
 	height: 7vh;
@@ -328,7 +328,59 @@ h2 + p {
 	animation: fadeOut 0.4s ease forwards;
 }
 
+/*HAMBURGER MENU
+=================*/
+.hamburger {
+	margin-left: 24vw;
+	color: white;
+	font-size: 5vh;
+}
 
+.hamburger:hover {
+	cursor: pointer;
+}
+
+.burger-menu {
+  display: none; /* Hide the menu by default on mobile */
+  flex-direction: column; /* Stack items vertically when shown */
+  position: absolute; /* Position it as a dropdown */
+  top: 7vh; /* Below the header */
+  right: 0;
+  background: black;
+  padding: 1rem;
+  border: 1px solid #46c53b;
+}
+
+.burger-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.burger-menu a:hover {
+  text-decoration: underline;
+}
+
+.burger-menu.open {
+  display: flex;
+}
+/*END HAMBURGER MENU
+====================*/
+
+
+
+
+
+
+
+
+@media screen AND (max-width: 1208px) AND (min-width: 501px) {
+
+}
+		
+		
+}
 
 @media screen AND (max-width:500px) {
 #todayContainer {

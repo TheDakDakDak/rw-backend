@@ -386,6 +386,10 @@ document.querySelectorAll('.close').forEach(closeBtn => {
   });
 });
 
+document.querySelector('.hamburger').addEventListener('click', () => {
+  document.querySelector('.burger-menu').classList.toggle('open');
+});
+
 
 
 
