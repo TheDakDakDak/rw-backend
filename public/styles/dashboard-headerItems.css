@@ -1,0 +1,112 @@
+header { /*Top Black Header*/
+	display: flex;
+	justify-content: flex-start;
+	background: black;
+	color: white;
+	height: 7vh;
+	border-bottom: 2px solid white;
+}
+
+section { /*Second Dark Gray Header*/
+	display: flex;
+	justify-content: center;
+	width: 100vw;
+	height: 5vh;
+	background: #313333;
+	border-bottom: 2px solid white;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+#todayContainer { /*Holds "Today", both direction arrows, and the calendar icon*/
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin-left: 1vw;
+	background: #313333;
+}
+#logoContainer { /*Holds the logo and the "Rainstorm Weights" text*/
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	order: 1;
+	width: 50vw;
+}
+
+#logoContainer > img { /*Logo*/
+	height: 7vh;
+}
+
+#addAndHamburgerContainer { /*Holds the plus icon and hamburger icon*/
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	order: 2;
+	width: 50vw;
+}
+
+#plussignclass { /*Plus icon*/
+	height: 4vh;
+}
+
+#plussignclass:hover { 
+	cursor: pointer;
+}
+
+#today { /*"Today" text*/
+	color: white;
+	font-weight: bold;
+	margin: 0 2vw 0 2vw;
+}
+
+
+#arrowLeft, #arrowRight { /*Arrows next to "Today"*/
+	color: white;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+#arrowLeft:hover, #arrowRight:hover, #calendar:hover {
+	cursor: pointer;
+}
+
+#calendar { /*Calendar icon*/
+	height: 3vh;
+	margin-left: 1vw;
+}
+
+.hamburger {
+	color: white;
+	font-size: 5vh;
+	margin-left: 1vw;
+	margin-right: 1vw;
+}
+
+.hamburger:hover {
+	cursor: pointer;
+}
+
+.burger-menu {
+  display: none; /* Hide the menu by default on mobile */
+  flex-direction: column; /* Stack items vertically when shown */
+  position: absolute; /* Position it as a dropdown */
+  top: 7vh; /* Below the header */
+  right: 0;
+  background: black;
+  padding: 1rem;
+  border: 1px solid #46c53b;
+}
+
+.burger-menu a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.burger-menu a:hover {
+  text-decoration: underline;
+}
+
+.burger-menu.open {
+  display: flex;
+}

@@ -250,18 +250,14 @@ async function displayTodaysWorkout() {
 
 	const heading = document.createElement("h3");
 	heading.textContent = entry.exercise;
+	heading.className = "workoutBoxHeading";
 	heading.style.margin = "0";
 	heading.style.color = "white";
 	heading.style.textDecoration = "underline";
 
 	const addSetBtn = document.createElement("img");
-	/*addSetBtn.textContent = "+";
-	addSetBtn.style.backgroundColor = "#46c53b";
-	addSetBtn.style.color = "white";*/
 	addSetBtn.style.border = "none";
 	addSetBtn.style.padding = "2px 8px";
-	/*addSetBtn.style.fontSize = "16px";
-	addSetBtn.style.borderRadius = "4px";*/
 	addSetBtn.style.cursor = "pointer";
 	addSetBtn.src = "../media/images/whiteplussign.jpg";
 	addSetBtn.style.height = "3.5vh";
@@ -299,6 +295,7 @@ async function displayTodaysWorkout() {
 
       p.textContent = `${setCount}: ${formattedWeight}lbs, ${set.reps} reps`;
 	  p.style.color = "white";
+	  p.className = "setListing";
 
       const delBtn = document.createElement("button");
       delBtn.textContent = "-";

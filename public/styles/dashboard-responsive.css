@@ -1,0 +1,44 @@
+@media screen and (max-width:500px) {
+#logoContainer > span {
+	font-size: 2vh;
+}
+.hamburger {
+	font-size: 5vh;
+	order: 3;
+}
+
+#today {
+	margin-left: 5vw;
+	margin-right: 5vw;
+}
+
+main > h2 {
+	font-size: 3.5vw;
+}
+
+#modalWindow {
+	width: 92vw;
+}
+
+h2 + p {
+	font-size: 80%;
+}
+
+#calendarWindow {
+	width: 92vw;
+}
+
+#close, #close2 {
+	width: 4vw;
+	margin: 3vw 3vw 0 0;
+	align-self: flex-end;
+}
+
+.workoutBoxHeading {
+	font-size: 2vh;
+}
+
+.setListing {
+	font-size: 1.75vh;
+}
+}

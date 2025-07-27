@@ -7,89 +7,9 @@
 body {
 	background: #e2e3dd;
 }
-/*HEADER ITEMS*/
-header {
-	display: flex;
-	justify-content: flex-start;
-	background: black;
-	color: white;
-	height: 7vh;
-	border-bottom: 2px solid white;
-}
-
-#header2 {
-	display: flex;
-	justify-content: center;
-	width: 100vw;
-	height: 5vh;
-	background: #313333;
-	border-bottom: 2px solid white;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-}
-
-#startWorkoutButton:hover {
-	cursor: pointer;
-}
-
-#todayContainer {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	margin-left: 1vw;
-	background: #313333;
-}
-#logoContainer {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-	order: 1;
-	width: 50vw;
-}
-
-#logoContainer > img {
-	height: 7vh;
-}
-
-#addAndHamburgerContainer {
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	order: 2;
-	width: 50vw;
-}
-
-#plussignclass {
-	height: 4vh;
-}
-
-#plussignclass:hover {
-	cursor: pointer;
-}
-
-#today {
-	color: white;
-	font-weight: bold;
-	margin: 0 2vw 0 2vw;
-}
-
-
-#arrowLeft, #arrowRight {
-	color: white;
-	font-size: 15px;
-	font-weight: bold;
-}
-
-#arrowLeft:hover, #arrowRight:hover, #calendar:hover {
-	cursor: pointer;
-}
-
-#calendar {
-	height: 3vh;
-	margin-left: 1vw;
-}
 
 /*Main Container*/
-main {
+main { /*Container for all workout info*/
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -98,7 +18,7 @@ main {
 	height: 93vh;
 }
 
-main > h2 {
+main > h2 { /*You haven't logged any workouts today.*/
 	color: #46c53b;
 	font-size: 24px;
 }
@@ -114,8 +34,13 @@ main > h2 {
 	border-radius: 30px;
 }
 
-/*Modal for workout entry*/
-.modal {
+#startWorkoutButton:hover {
+	cursor: pointer;
+}
+
+/*MODAL AND MENUS
+=================*/
+.modal { /*Overlay over entire screen*/
 	display: none;
 	justify-content: center;
 	align-items: center;
@@ -128,7 +53,7 @@ main > h2 {
 	background: rgba(0,0,0,0.4);
 }
 
-#modalWindow {
+#modalWindow { /*The modal window itself*/
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -137,7 +62,7 @@ main > h2 {
 	height: 86vh;
 	background: #e2e3dd;
 	border-radius: 12px;
-	border: 3px solid #46c53b;
+	border: 3px solid black;
 	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
@@ -217,21 +142,11 @@ h2 + p {
   cursor: pointer;
   text-align: center;
   font-size: 16px;
+  border: 1px solid #f7cd16; 
 }
 
 #bodyPartSelect li:hover, #exerciseList li:hover {
   background-color: #3aa92f;
-}
-
-#backButton {
-  margin-top: 2vh;
-  padding: 10px 20px;
-  font-size: 14px;
-  border: 2px solid #f7cd16;
-  background: #46c53b;
-  color: white;
-  border-radius: 30px;
-  cursor: pointer;
 }
 
 #exerciseSummaryContainer {
@@ -279,7 +194,7 @@ h2 + p {
 }
 
 #saveSet, #addExBtn {
-  padding: 10px 40px;
+  padding: 4px 16px;
   font-size: 16px;
   border: 2px solid #f7cd16 !important;
   background: #46c53b;
@@ -291,6 +206,7 @@ h2 + p {
 
 #addExBtn {
   margin-bottom: 5vh;
+  padding: 4px 16px;
 }
 
 #delEx {
@@ -302,22 +218,17 @@ h2 + p {
 	color: white;
 	border: 2px solid black;
 	border-radius: 30px;
-	margin-bottom: 8vh;
+	margin-bottom: 1vh;
 }
 
 #delExBtn:hover {
 	cursor: pointer;
 }
 
-#backToExercises, #backToMuscleGroups {
-  margin-top: 2vh;
-  padding: 10px 20px;
-  font-size: 14px;
-  border: 2px solid #f7cd16;
-  background: #46c53b;
-  color: white;
-  border-radius: 30px;
-  cursor: pointer;
+#backToExercises,#backToMuscleGroups, #backButton {
+	margin-top: 3vh;
+	cursor: pointer;
+	height: 3vh;
 }
 
 #addEx {
@@ -344,95 +255,4 @@ h2 + p {
 
 .fade-out {
 	animation: fadeOut 0.4s ease forwards;
-}
-
-/*HAMBURGER MENU
-=================*/
-.hamburger {
-	color: white;
-	font-size: 5vh;
-	margin-left: 1vw;
-	margin-right: 1vw;
-}
-
-.hamburger:hover {
-	cursor: pointer;
-}
-
-.burger-menu {
-  display: none; /* Hide the menu by default on mobile */
-  flex-direction: column; /* Stack items vertically when shown */
-  position: absolute; /* Position it as a dropdown */
-  top: 7vh; /* Below the header */
-  right: 0;
-  background: black;
-  padding: 1rem;
-  border: 1px solid #46c53b;
-}
-
-.burger-menu a {
-  color: white;
-  text-decoration: none;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-.burger-menu a:hover {
-  text-decoration: underline;
-}
-
-.burger-menu.open {
-  display: flex;
-}
-/*END HAMBURGER MENU
-====================*/
-
-
-
-
-
-
-
-
-
-@media screen and (max-width:500px) {
-#logoContainer > span {
-	font-size: 2vh;
-}
-.hamburger {
-	font-size: 5vh;
-	order: 3;
-}
-
-#today {
-	margin-left: 5vw;
-	margin-right: 5vw;
-}
-
-main > h2 {
-	font-size: 3.5vw;
-}
-
-#modalWindow {
-	width: 92vw;
-}
-
-h2 + p {
-	font-size: 80%;
-}
-
-.modal2 {
-	justify-content: center;
-	align-items: center;
-}
-
-#calendarWindow {
-	width: 92vw;
-}
-
-#close, #close2 {
-	width: 4vw;
-	margin: 3vw 3vw 0 0;
-	align-self: flex-end;
-}
 }
