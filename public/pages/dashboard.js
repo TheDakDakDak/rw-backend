@@ -240,8 +240,7 @@ async function displayTodaysWorkout() {
   currentWorkout.workout.forEach(entry => {
     const box = document.createElement("div");
 	box.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.5)";
-	box.style.background = "black";
-	box.style.border = "2px solid white";
+	box.style.background = "#313333";
     box.classList.add("exercise-box");
 
     const headingContainer = document.createElement("div");
@@ -255,15 +254,17 @@ async function displayTodaysWorkout() {
 	heading.style.color = "white";
 	heading.style.textDecoration = "underline";
 
-	const addSetBtn = document.createElement("button");
-	addSetBtn.textContent = "+";
+	const addSetBtn = document.createElement("img");
+	/*addSetBtn.textContent = "+";
 	addSetBtn.style.backgroundColor = "#46c53b";
-	addSetBtn.style.color = "white";
+	addSetBtn.style.color = "white";*/
 	addSetBtn.style.border = "none";
 	addSetBtn.style.padding = "2px 8px";
-	addSetBtn.style.fontSize = "16px";
-	addSetBtn.style.borderRadius = "4px";
+	/*addSetBtn.style.fontSize = "16px";
+	addSetBtn.style.borderRadius = "4px";*/
 	addSetBtn.style.cursor = "pointer";
+	addSetBtn.src = "../media/images/whiteplussign.jpg";
+	addSetBtn.style.height = "3.5vh";
 	addSetBtn.title = `Add a new set of ${entry.exercise}.`
 
 

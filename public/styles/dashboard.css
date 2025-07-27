@@ -12,8 +12,19 @@ header {
 	display: flex;
 	justify-content: flex-start;
 	background: black;
+	color: white;
 	height: 7vh;
-	border-bottom: 2px solid #46c53b;
+	border-bottom: 2px solid white;
+}
+
+#header2 {
+	display: flex;
+	justify-content: center;
+	width: 100vw;
+	height: 5vh;
+	background: #313333;
+	border-bottom: 2px solid white;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
 #startWorkoutButton:hover {
@@ -22,29 +33,37 @@ header {
 
 #todayContainer {
 	display: flex;
-	width: 40vw;
 	justify-content: flex-start;
 	align-items: center;
 	margin-left: 1vw;
-	background: black;
+	background: #313333;
 }
 #logoContainer {
-	width: 30vw;
-}
-
-#plussignclass {
-	height: 3.5vh;
-	margin-top: 0.25vh;
-	margin-left: 1vw;
-}
-
-#plussignclass:hover {
-	cursor: pointer;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	order: 1;
+	width: 50vw;
 }
 
 #logoContainer > img {
 	height: 7vh;
-	margin-left: 7vw;
+}
+
+#addAndHamburgerContainer {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	order: 2;
+	width: 50vw;
+}
+
+#plussignclass {
+	height: 4vh;
+}
+
+#plussignclass:hover {
+	cursor: pointer;
 }
 
 #today {
@@ -65,7 +84,7 @@ header {
 }
 
 #calendar {
-	height: 50%;
+	height: 3vh;
 	margin-left: 1vw;
 }
 
@@ -75,7 +94,6 @@ main {
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border-top: 2px solid #f7cd16;
 	background: #e2e3dd;
 	height: 93vh;
 }
@@ -331,9 +349,10 @@ h2 + p {
 /*HAMBURGER MENU
 =================*/
 .hamburger {
-	margin-left: 24vw;
 	color: white;
 	font-size: 5vh;
+	margin-left: 1vw;
+	margin-right: 1vw;
 }
 
 .hamburger:hover {
@@ -377,39 +396,17 @@ h2 + p {
 
 
 @media screen and (max-width:500px) {
-#todayContainer {
-	order: 1;
-	width: 70vw;
+#logoContainer > span {
+	font-size: 2vh;
 }
-
-#calendar {
-	margin-left: 4vw;
-}
-
 .hamburger {
-	margin-left: 0;
 	font-size: 5vh;
 	order: 3;
 }
 
-#plussignclass {
-	margin-right: 4vw;
-	margin-left: 10vw;
-	margin-top: 1.5vh;
-	order: 2;
-	height: 4.15vh;
-}
-
-#logoContainer {
-	display: none;
-}
-
-#logoContainer > img {
-	display: none;
-}
-
 #today {
-	margin: 0 4vw 0 4vw;
+	margin-left: 5vw;
+	margin-right: 5vw;
 }
 
 main > h2 {
