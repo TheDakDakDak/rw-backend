@@ -5,6 +5,7 @@
 .hamburger {
 	font-size: 5vh;
 	order: 3;
+	margin-left: 3vw;
 }
 
 #today {

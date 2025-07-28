@@ -1,10 +1,7 @@
 fetch('/api/session', {
   credentials: 'include'
-})
+  })
   .then(res => {
-    if (!res.ok) {
-      throw new Error("Not logged in");
-    }
     return res.json();
   })
   .then(data => {
@@ -13,10 +10,9 @@ fetch('/api/session', {
     }
   })
   .catch(err => {
-    console.warn("Session check failed:", err);
     alert("You must log in first.");
     window.location.href = "../login";
-  });
+ });
 
 let selectedDate = new Date();
 selectedDate.setHours(12);
@@ -24,6 +20,11 @@ selectedDate.setHours(12);
 let currentWorkout = {
   date: null,
   workout: []
+};
+
+let exerciseCache = {
+  all: [],
+  byBodyPart: {}
 };
 
 let currentExercise = null;
@@ -35,15 +36,81 @@ let displayTimeoutId;
 window.addEventListener("DOMContentLoaded", () => {
   displayTodaysWorkout();
   updateDateDisplay();
+  initializeExerciseCache();
 });
 
+//Open workoutMenu to start a workout
+document.querySelector('#startWorkoutButton').addEventListener('click', workoutMenu);
+document.querySelector('#plussignclass').addEventListener('click', workoutMenu);
+
+//Sets currentWorkout date and brings up the muscle group selection menu.
+function workoutMenu() {
+  const dateText = selectedDate.toISOString().split("T")[0];
+  currentWorkout.date = dateText;
+  document.querySelector('.modal').style.display = 'flex';
+  document.querySelector('#bodyPartSelect').style.display = 'block';
+  document.querySelector('#calendarWindow').style.display = 'none';
+  document.querySelector('#exerciseSelect').style.display = 'none';
+  document.querySelector('#repsForm').style.display = 'none';
+}
+
+//Event listener on each button on the muscle group selection menu. Gets body part + passes it to showExercises.
+document.querySelectorAll('.body-part').forEach(item => {
+	item.addEventListener('click', () => {
+		const part = item.getAttribute('data-part');
+		showExercises(part);
+	});
+});
+
+function showExercises(part) {
+  const theExercises = exerciseCache.byBodyPart[part] || [];
+  const exerciseList = document.querySelector('#exerciseList'); //The DOM's <ul> for exercises
+  exerciseList.innerHTML = ""; //Start from an empty <ul>
+
+  theExercises
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach(ex => {
+      const li = document.createElement('li'); //Create a blank list item
+      li.textContent = ex.name; //Assign it the name of the exercise
+      li.addEventListener('click', () => { //Slap an event listener on it
+        currentExercise = ex.name; //Set current exercise to this exercise
+        currentExerciseId = ex.id; //Set current exercise id to this exercis
+        openRepsForm(currentExercise, currentExerciseId); //Pass the exercise's name+id to reps form
+      });
+      exerciseList.appendChild(li); //Add it to DOM
+    });
+
+  document.querySelector('#bodyPartSelect').style.display = 'none';
+  document.querySelector('#exerciseSelect').style.display = 'block';
+}
+
+//Opens rep entry form. Called by a button in showExercises()
+function openRepsForm(exerciseName, exerciseId) {
+  currentExercise = exerciseName;
+  currentExerciseId = exerciseId;
+  
+  const dateText = selectedDate.toISOString().split("T")[0];
+  currentWorkout.date = dateText;
+  
+  document.querySelector('#exerciseHeading').textContent = exerciseName;
+  document.querySelector('#repsForm').style.display = 'block';
+  document.querySelector('#calendarWindow').style.display = 'none';
+  document.querySelector('#exerciseSelect').style.display = 'none';
+}
+
 //Logic for saving a set in the set entry menu
+const saveSetBtn = document.querySelector('#saveSet');
+let isSaving = false;
 document.querySelector('#saveSet').addEventListener('click', async () => {
+  if (isSaving) return; // prevent double-clicking
+  isSaving = true;
+  saveSetBtn.disabled = true;
   //Get values from input fields
   const reps = document.querySelector('#repsInput').value.trim();
   const weight = document.querySelector('#weightInput').value.trim();
 
   //Validate weight and reps values
+  console.log("Trying to save:", { reps, weight, currentExercise, currentExerciseId });
   if (!reps || !weight || !currentExercise || !currentExerciseId) return;
   if (reps <= 0 || weight < 0) {
     showToast("Please enter valid values");
@@ -78,6 +145,15 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
         }]
       })
     });
+	showToast(`Set Saved!`);
+    clearTimeout(displayTimeoutId);
+    displayTimeoutId = setTimeout(() => {
+    displayTodaysWorkout();
+    }, 50);
+    setTimeout(() => {
+    isSaving = false;
+    saveSetBtn.disabled = false;
+    }, 50);
     if (!res.ok) {
       throw new Error('Failed to save workout');
 	}
@@ -85,14 +161,6 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
     console.error('Failed to send new set:', err);
     // Optionally handle error, e.g., showToast("Save failed, using local data");
   }
-
-  //Rebuild the display once, fetching fresh data from server
-  clearTimeout(displayTimeoutId);
-  displayTimeoutId = setTimeout(() => {
-    displayTodaysWorkout();
-  }, 200);
-  document.querySelector(".modal").style.display = "none";
-  showToast(`Set Saved!`);
   });
   
   
@@ -119,30 +187,23 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
 	  }
 	  else {
 		  showToast(data.message);
+		  await initializeExerciseCache();
 	  }
 		  
   });
-  
+
 document.getElementById('addEx').addEventListener('click', async () => {
-	const res = await fetch('/api/getAllExercises', {
-		method: 'GET',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-	});
-	const data = await res.json();
-	console.log(data);
-	const theExercises = data.exercises;
-	const exerciseDropdown = document.querySelector('#delEx');
-	exerciseDropdown.innerHTML = "";
-	
-	theExercises
-		.sort((a, b) => a.name.localeCompare(b.name))
-		.forEach(ex => {
-			const optionItem = document.createElement('option');
-			optionItem.textContent = ex.name;
-			optionItem.value = ex.name;
-			exerciseDropdown.appendChild(optionItem);
-		})
+  const exerciseDropdown = document.querySelector('#delEx');
+  exerciseDropdown.innerHTML = "";
+
+  exerciseCache.all
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach(ex => {
+      const optionItem = document.createElement('option');
+      optionItem.textContent = ex.name;
+      optionItem.value = ex.name;
+      exerciseDropdown.appendChild(optionItem);
+    });
 });
 
 document.getElementById('delExBtn').addEventListener('click', async () => {
@@ -162,46 +223,12 @@ document.getElementById('delExBtn').addEventListener('click', async () => {
 		  document.querySelector('.modal').style.display = 'none';
 	      document.getElementById('addExForm').style.display = 'none';
 		}, 500);
+		await initializeExerciseCache();
 	}
 	else {
 		alert(data.message);
 	}
 });
-	
-
-//Exercise selection menu
-async function showExercises(part) {
-	const res = await fetch('/api/getExercisesByBodyPart', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-		body: JSON.stringify({
-			part: part
-		})
-	});
-	const data = await res.json();
-	const theExercises = data.exercises;
-    const exerciseList = document.querySelector('#exerciseList');
-    exerciseList.innerHTML = "";
-	
-	theExercises
-		.sort((a, b) => a.name.localeCompare(b.name))
-		.forEach(ex => {
-			const li = document.createElement('li');
-			li.textContent = ex.name;
-			li.addEventListener('click', () => {
-				currentExercise = ex.name;
-				currentExerciseId = ex.id;
-				openRepsForm(currentExercise, currentExerciseId);
-			});
-			exerciseList.appendChild(li);
-  });
-
-
-  document.querySelector('#bodyPartSelect').style.display = 'none';
-  document.querySelector('#exerciseSelect').style.display = 'block';
-}
-
 
 async function displayTodaysWorkout() {
   const container = document.getElementById("exerciseSummaryContainer");
@@ -348,6 +375,30 @@ async function displayTodaysWorkout() {
   });
 }
 
+async function initializeExerciseCache() {
+  try {
+    const res = await fetch('/api/getAllExercises', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
+    });
+    const data = await res.json();
+    exerciseCache.all = data.exercises;
+
+    // Organize by body part
+    exerciseCache.byBodyPart = {};
+    for (const ex of data.exercises) {
+      if (!exerciseCache.byBodyPart[ex.body_part]) {
+        exerciseCache.byBodyPart[ex.body_part] = [];
+      }
+      exerciseCache.byBodyPart[ex.body_part].push(ex);
+    }
+  } catch (err) {
+    console.error("Failed to initialize exercise cache:", err);
+    showToast("Could not load exercises");
+  }
+}
+
 //For toast messages
 function showToast(message) {
   const toast = document.getElementById("toast");
@@ -362,8 +413,6 @@ function showToast(message) {
 
 
 //Form Openers and Closers
-document.querySelector('#startWorkoutButton').addEventListener('click', workoutMenu);
-document.querySelector('#plussignclass').addEventListener('click', workoutMenu);
 
 document.getElementById("addEx").addEventListener("click", () => {
   document.querySelector('#bodyPartSelect').style.display = 'none';
@@ -390,28 +439,6 @@ document.querySelectorAll('.body-part').forEach(item => {
 		}, 400); // Match CSS animation duration
 	});
 });
-
-function openRepsForm(exerciseName, exerciseId) {
-  currentExercise = exerciseName;
-  currentExerciseId = exerciseId;
-  document.querySelector('#calendarWindow').style.display = 'none';
-  document.querySelector('#exerciseHeading').textContent = exerciseName;
-  document.querySelector('#exerciseSelect').style.display = 'none';
-  document.querySelector('#repsForm').style.display = 'block';
-}
-
-function workoutMenu() {
-  //Sets currentWorkout's date based on where we are in the calendar.
-  const dateText = selectedDate.toISOString().split("T")[0];
-  currentWorkout.date = dateText;
-  
-  //Displays only the body part select menu. Hides other forms.
-  document.querySelector('#calendarWindow').style.display = 'none';
-  document.querySelector('#bodyPartSelect').style.display = 'block';
-  document.querySelector('#exerciseSelect').style.display = 'none';
-  document.querySelector('#repsForm').style.display = 'none';
-  document.querySelector('.modal').style.display = 'flex';
-}
 
 document.querySelector('#backButton').addEventListener('click', () => { //Back button leading from the exercise select menu to the body part select menu
   document.querySelector('#exerciseSelect').style.display = 'none';

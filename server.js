@@ -233,7 +233,7 @@ app.get('/api/getAllExercises', async (req, res) => {
   if(!userId) {
 	return res.status(400).json({ message: 'You must be logged in.' });
   }
-  const result = await db.query('SELECT name FROM user_exercises WHERE user_id = $1', [userId]);
+  const result = await db.query('SELECT id, name, body_part FROM user_exercises WHERE user_id = $1', [userId]);
   return res.json({ exercises: result.rows });
 });
 
@@ -325,7 +325,6 @@ app.post('/api/saveWorkout', async (req, res) => {
       'SELECT id FROM workouts WHERE user_id = $1 AND date = $2',
       [userId, date]
     );
-
     let workoutId;
     if (existing.rows.length > 0) {
       workoutId = existing.rows[0].id;
@@ -341,9 +340,9 @@ app.post('/api/saveWorkout', async (req, res) => {
     for (const entry of workout) {
       const { exercise_id, sets } = entry;
       if (!exercise_id) continue;
-
       for (let i = 0; i < sets.length; i++) {
         const { weight, reps } = sets[i];
+		
         await client.query(
           `INSERT INTO sets (workout_id, exercise_id, weight, reps, set_order)
            VALUES ($1, $2, $3, $4, $5)`,
@@ -351,11 +350,11 @@ app.post('/api/saveWorkout', async (req, res) => {
         );
       }
     }
-
     await client.query('COMMIT');
     res.json({ message: 'Workout saved successfully' });
   } catch (err) {
     await client.query('ROLLBACK');
+	console.error("Error during saving workout set:", err.message);
     res.status(500).json({ message: 'Failed to save workout' });
   } finally {
     client.release();

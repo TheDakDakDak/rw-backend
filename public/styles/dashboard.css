@@ -70,21 +70,6 @@ h2 + p {
 	color: red;
 }
 
-
-/*Modal for date entry*/
-.modal2 {
-	display: none;
-	justify-content: flex-start;
-	align-items: flex-start;
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: 1000;
-	width: 100vw;
-	height: 100vh;
-	background: rgba(0,0,0,0.4);
-}
-
 #calendarWindow {
   display: flex;
   flex-direction: column;
@@ -107,7 +92,7 @@ h2 + p {
 }
 
 #calendarButton {
-	height: 7vh;
+	height: 3.25vh;
 	margin-top: 2vh;
 	border: 2px solid #f7cd16;
 	background: #46c53b;
@@ -243,16 +228,6 @@ h2 + p {
 	width: 15vw !important;
 }
 
-/*Hide delay when querying database for exercises by muscle group*/
-@keyframes fadeOut {
-	from {
-		opacity: 1;
-	}
-	to {
-		opacity: 0;
-	}
-}
-
-.fade-out {
-	animation: fadeOut 0.4s ease forwards;
+#saveSet:disabled {
+  cursor: not-allowed;
 }
