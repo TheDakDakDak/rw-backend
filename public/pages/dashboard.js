@@ -100,9 +100,9 @@ function openRepsForm(exerciseName, exerciseId) {
 
 //Logic for saving a set in the set entry menu
 const saveSetBtn = document.querySelector('#saveSet');
-let isSaving = false;
+let isSaving = false; //Temporary bandaid for DOM updating bug when save is clicked multiple times quickly.
 document.querySelector('#saveSet').addEventListener('click', async () => {
-  if (isSaving) return; // prevent double-clicking
+  if (isSaving) return; //Prevent multiple clicks. Part of temporary bandaid
   isSaving = true;
   saveSetBtn.disabled = true;
   //Get values from input fields
@@ -124,11 +124,11 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
       exercise: currentExercise,
       sets: [],
     };
-    currentWorkout.workout.push(exerciseEntry);
+    currentWorkout.workout.push(exerciseEntry); //Placement is the possible cause of bug. Investigate later
   }
 
   //Inserts the set into currentWorkout
-  exerciseEntry.sets.push({ reps: Number(reps), weight: Number(weight) });
+  exerciseEntry.sets.push({ reps: Number(reps), weight: Number(weight) }); //Placement is the possible cause of bug. Investigate later
 
   //Adds the set to the database (see server.js) for more details.
   try {
@@ -157,82 +157,16 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
     if (!res.ok) {
       throw new Error('Failed to save workout');
 	}
-  } catch (err) {
-    console.error('Failed to send new set:', err);
-    // Optionally handle error, e.g., showToast("Save failed, using local data");
-  }
-  });
-  
-  
-  
-  document.getElementById('addExBtn').addEventListener('click', async () => {
-	  const exerciseToAdd = document.getElementById('exName').value.trim();
-	  const mgOfExercise = document.getElementById('exMg').value;
-	  if(!exerciseToAdd) {
-		  alert("Please enter an exercise name.");
-		  return;
-	  }
-	  const res = await fetch('/api/addCustomExercise', {
-		  method: 'POST',
-		  headers: { 'Content-Type': 'application/json' },
-		  credentials: 'include',
-		  body: JSON.stringify({
-			  exercise1: exerciseToAdd,
-			  bodyPart1: mgOfExercise
-	      })
-	  });
-	  const data = await res.json();
-	  if(!res.ok) {
-		  alert(data.message);
-	  }
-	  else {
-		  showToast(data.message);
-		  await initializeExerciseCache();
-	  }
-		  
-  });
-
-document.getElementById('addEx').addEventListener('click', async () => {
-  const exerciseDropdown = document.querySelector('#delEx');
-  exerciseDropdown.innerHTML = "";
-
-  exerciseCache.all
-    .sort((a, b) => a.name.localeCompare(b.name))
-    .forEach(ex => {
-      const optionItem = document.createElement('option');
-      optionItem.textContent = ex.name;
-      optionItem.value = ex.name;
-      exerciseDropdown.appendChild(optionItem);
-    });
-});
-
-document.getElementById('delExBtn').addEventListener('click', async () => {
-	const selectionDelete = document.getElementById('delEx').value;
-	const res = await fetch('/api/deleteExercise', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		credentials: 'include',
-		body: JSON.stringify({ 
-			name: selectionDelete 
-		})
-	});
-	if(res.ok) {
-		const data = await res.json();
-		showToast(data.message);
-		setTimeout(() => {
-		  document.querySelector('.modal').style.display = 'none';
-	      document.getElementById('addExForm').style.display = 'none';
-		}, 500);
-		await initializeExerciseCache();
-	}
-	else {
-		alert(data.message);
+    } catch (err) {
+      console.error('Failed to send new set:', err);
+    
 	}
 });
 
+//Draws the entire day's workout on the DOM
 async function displayTodaysWorkout() {
-  const container = document.getElementById("exerciseSummaryContainer");
-  container.innerHTML = ""; 
+  const container = document.getElementById("exerciseSummaryContainer"); //will hold all workout info visually
+  container.innerHTML = ""; //clears container prior to use
 
   const dateKey = selectedDate.toISOString().split("T")[0];
 
@@ -242,7 +176,7 @@ async function displayTodaysWorkout() {
     });
     const result = await response.json();
 
-    if (!result.workout || result.workout.length === 0) {
+    if (!result.workout || result.workout.length === 0) { //If no workouts on this date, display <main>
       document.querySelector("main").style.display = "flex";
       return;
     }
@@ -289,9 +223,7 @@ async function displayTodaysWorkout() {
 	addSetBtn.src = "../media/images/whiteplussign.jpg";
 	addSetBtn.style.height = "3.5vh";
 	addSetBtn.title = `Add a new set of ${entry.exercise}.`
-
-
-	addSetBtn.addEventListener("click", () => {
+    addSetBtn.addEventListener("click", () => {
 	currentExercise = entry.exercise;
 	currentExerciseId = entry.exercise_id;
 
@@ -314,12 +246,14 @@ async function displayTodaysWorkout() {
 
     let setCount = 1;
 
+	entry.sets.sort((a, b) => a.id - b.id);
     entry.sets.forEach((set, setIndex) => {
       const p = document.createElement("p");
       const formattedWeight = Number(set.weight) % 1 === 0
 	  ? Number(set.weight).toFixed(0)
 	  : Number(set.weight).toFixed(1);
 
+      p.id = `set-${set.id}`;
       p.textContent = `${setCount}: ${formattedWeight}lbs, ${set.reps} reps`;
 	  p.style.color = "white";
 	  p.className = "setListing";
@@ -338,33 +272,59 @@ async function displayTodaysWorkout() {
       delBtn.title = "Delete this set";
 
       delBtn.addEventListener("click", async () => {
-  const setId = set.id;
+        const setId = set.id;
 
-  if (!setId) {
-    console.error("No set ID found, cannot delete.");
-    return;
-  }
+        if (!setId) {
+          console.error("No set ID found, cannot delete.");
+          return;
+        }
 
-  try {
-    const res = await fetch(`/api/deleteSet/${setId}`, {
-      method: 'DELETE',
-      credentials: 'include'
-    });
+        try {
+          const res = await fetch(`/api/deleteSet/${setId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
 
-    if (!res.ok) {
-      throw new Error('Failed to delete set from database');
-    }
+        if (!res.ok) {
+          throw new Error('Failed to delete set from database');
+        }
 
-    showToast("Set deleted!");
+        showToast("Set deleted!");
 
-    // Refresh display to re-fetch updated workout with correct set ordering
-    displayTodaysWorkout();
+      // Refresh display to re-fetch updated workout with correct set ordering
+        const setElement = document.getElementById(`set-${setId}`);
+		if (setElement) {
+	const parentBox = setElement.closest(".exercise-box");
+	const setParagraphs = parentBox.querySelectorAll('.setListing');
 
-  } catch (err) {
-    console.error("Delete failed:", err);
-    showToast("Delete failed");
-  }
-});
+	if (setParagraphs.length === 1) {
+		parentBox.remove();
+		const remainingBoxes = document.querySelectorAll('.exercise-box');
+		if (remainingBoxes.length === 0) {
+		document.querySelector("main").style.display = "flex";
+	}
+	} else {
+		setElement.remove();
+		const remaining = parentBox.querySelectorAll('.setListing');
+		remaining.forEach((p, index) => {
+			const delBtn = p.querySelector("button");
+			const text = p.textContent.replace("-", "").trim();
+			const parts = text.split(":");
+			if (parts.length >= 2) {
+				const rest = parts.slice(1).join(":").trim();
+				p.innerHTML = `${index + 1}: ${rest}`;
+				p.appendChild(delBtn);
+			}
+		});
+	}
+}
+		
+
+        } catch (err) {
+          console.error("Delete failed:", err);
+          showToast("Delete failed");
+        }
+      });
 
       p.appendChild(delBtn);
       box.appendChild(p);
@@ -374,6 +334,73 @@ async function displayTodaysWorkout() {
     container.appendChild(box); 
   });
 }
+  
+  
+  
+document.getElementById('addExBtn').addEventListener('click', async () => {
+	const exerciseToAdd = document.getElementById('exName').value.trim();
+	const mgOfExercise = document.getElementById('exMg').value;
+	if(!exerciseToAdd) {
+		alert("Please enter an exercise name.");
+		return;
+	}
+	const res = await fetch('/api/addCustomExercise', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({
+			exercise1: exerciseToAdd,
+			bodyPart1: mgOfExercise
+	    })
+	});
+	const data = await res.json();
+	if(!res.ok) {
+		alert(data.message);
+	}
+	else {
+		showToast(data.message);
+		await initializeExerciseCache();
+	}
+		  
+});
+
+document.getElementById('addEx').addEventListener('click', async () => {
+  const exerciseDropdown = document.querySelector('#delEx');
+  exerciseDropdown.innerHTML = "";
+
+  exerciseCache.all
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach(ex => {
+      const optionItem = document.createElement('option');
+      optionItem.textContent = ex.name;
+      optionItem.value = ex.name;
+      exerciseDropdown.appendChild(optionItem);
+    });
+});
+
+document.getElementById('delExBtn').addEventListener('click', async () => {
+	const selectionDelete = document.getElementById('delEx').value;
+	const res = await fetch('/api/deleteExercise', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		credentials: 'include',
+		body: JSON.stringify({ 
+			name: selectionDelete 
+		})
+	});
+	if(res.ok) {
+		const data = await res.json();
+		showToast(data.message);
+		setTimeout(() => {
+		  document.querySelector('.modal').style.display = 'none';
+	      document.getElementById('addExForm').style.display = 'none';
+		}, 500);
+		await initializeExerciseCache();
+	}
+	else {
+		alert(data.message);
+	}
+});
 
 async function initializeExerciseCache() {
   try {
@@ -472,7 +499,7 @@ document.querySelector('#calendar').addEventListener('click', () => {	//Calendar
   document.querySelector('#bodyPartSelect').style.display = 'none';
   document.querySelector('#calendarWindow').style.display = 'flex';
   document.querySelector('.modal').style.display = 'flex';
-  document.querySelectory('#repsForm').style.display = 'none';
+  document.querySelector('#repsForm').style.display = 'none';
 });
 document.querySelector('#calendarButton').addEventListener('click', dateSelect);
 
