@@ -15,10 +15,17 @@ main { /*Container for all workout info*/
 	justify-content: center;
 	align-items: center;
 	background: #e2e3dd;
-	height: 93vh;
+	height: 88vh;
 }
 
-main > h2 { /*You haven't logged any workouts today.*/
+main > div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+main > div> h2 { /*You haven't logged any workouts today.*/
 	color: #46c53b;
 	font-size: 24px;
 }

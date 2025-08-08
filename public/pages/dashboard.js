@@ -30,8 +30,6 @@ let exerciseCache = {
 let currentExercise = null;
 let currentExerciseId = null;
 
-let displayTimeoutId;
-
 //Main App Functionality
 window.addEventListener("DOMContentLoaded", () => {
   displayTodaysWorkout();
@@ -98,39 +96,278 @@ function openRepsForm(exerciseName, exerciseId) {
   document.querySelector('#exerciseSelect').style.display = 'none';
 }
 
+// Helper function to create exercise box
+function createExerciseBox(entry) {
+  const box = document.createElement("div");
+  box.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.5)";
+  box.style.background = "#313333";
+  box.classList.add("exercise-box");
+  box.setAttribute('data-exercise', entry.exercise);
+
+  const headingContainer = document.createElement("div");
+  headingContainer.style.display = "flex";
+  headingContainer.style.alignItems = "center";
+  headingContainer.style.justifyContent = "space-between";
+
+  const heading = document.createElement("h3");
+  heading.textContent = entry.exercise;
+  heading.className = "workoutBoxHeading";
+  heading.style.margin = "0";
+  heading.style.color = "white";
+  heading.style.textDecoration = "underline";
+
+  const addSetBtn = document.createElement("img");
+  addSetBtn.style.border = "none";
+  addSetBtn.style.padding = "2px 8px";
+  addSetBtn.style.cursor = "pointer";
+  addSetBtn.src = "../media/images/whiteplussign.jpg";
+  addSetBtn.style.height = "3.5vh";
+  addSetBtn.title = `Add a new set of ${entry.exercise}.`
+  addSetBtn.addEventListener("click", () => {
+    currentExercise = entry.exercise;
+    currentExerciseId = entry.exercise_id;
+
+    const dateText = selectedDate.toISOString().split("T")[0];
+    currentWorkout.date = dateText;
+
+    document.querySelector(".modal").style.display = "flex";
+    document.getElementById("bodyPartSelect").style.display = "none";
+    document.getElementById("exerciseSelect").style.display = "none";
+    document.getElementById("repsForm").style.display = "block";
+    document.getElementById("exerciseHeading").textContent = entry.exercise;
+  });
+
+  headingContainer.appendChild(heading);
+  headingContainer.appendChild(addSetBtn);
+  box.appendChild(headingContainer);
+
+  return box;
+}
+
+// Helper function to create set element
+function createSetElement(set, setNumber, exerciseName) {
+  const p = document.createElement("p");
+  const formattedWeight = Number(set.weight) % 1 === 0
+    ? Number(set.weight).toFixed(0)
+    : Number(set.weight).toFixed(1);
+
+  p.id = set.id ? `set-${set.id}` : `set-temp-${Date.now()}`;
+  p.textContent = `${setNumber}: ${formattedWeight}lbs, ${set.reps} reps`;
+  p.style.color = "white";
+  p.className = "setListing";
+
+  const delBtn = document.createElement("button");
+  delBtn.textContent = "-";
+  delBtn.style.marginLeft = "8px";
+  delBtn.style.backgroundColor = "red";
+  delBtn.style.color = "white";
+  delBtn.style.border = "none";
+  delBtn.style.padding = "1px 4px";
+  delBtn.style.fontSize = "10px";
+  delBtn.style.lineHeight = "1";
+  delBtn.style.borderRadius = "2px";
+  delBtn.style.cursor = "pointer";
+  delBtn.title = "Delete this set";
+
+  delBtn.addEventListener("click", async () => {
+    // Get the current set ID from the paragraph element
+    const currentSetId = p.id.replace('set-', '');
+
+    if (!currentSetId) {
+      console.error("No set ID found, cannot delete.");
+      return;
+    }
+
+    // Check if this is a temporary ID (not yet saved to database)
+    if (currentSetId.toString().startsWith('temp-')) {
+      // This is an optimistic set that hasn't been saved yet, just remove it
+      removeSetFromDOM(currentSetId);
+      showToast("Set removed!");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/deleteSet/${currentSetId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to delete set from database');
+      }
+
+      showToast("Set deleted!");
+
+      const setElement = document.getElementById(`set-${currentSetId}`);
+      if (setElement) {
+        const parentBox = setElement.closest(".exercise-box");
+        const setParagraphs = parentBox.querySelectorAll('.setListing');
+
+        if (setParagraphs.length === 1) {
+          parentBox.remove();
+          const remainingBoxes = document.querySelectorAll('.exercise-box');
+          if (remainingBoxes.length === 0) {
+            document.querySelector("main").style.display = "flex";
+          }
+        } else {
+          setElement.remove();
+          const remaining = parentBox.querySelectorAll('.setListing');
+          remaining.forEach((p, index) => {
+            const delBtn = p.querySelector("button");
+            const text = p.textContent.replace("-", "").trim();
+            const parts = text.split(":");
+            if (parts.length >= 2) {
+              const rest = parts.slice(1).join(":").trim();
+              p.innerHTML = `${index + 1}: ${rest}`;
+              p.appendChild(delBtn);
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.error("Delete failed:", err);
+      showToast("Delete failed");
+    }
+  });
+
+  p.appendChild(delBtn);
+  return p;
+}
+
+// Helper function to update a temporary set ID with the real database ID
+function updateSetId(tempId, realId) {
+  const setElement = document.getElementById(`set-${tempId}`);
+  if (setElement) {
+    setElement.id = `set-${realId}`;
+    
+    // Update the currentWorkout state as well
+    currentWorkout.workout.forEach(exerciseEntry => {
+      exerciseEntry.sets.forEach(set => {
+        if (set.id === tempId) {
+          set.id = realId;
+        }
+      });
+    });
+  }
+}
+
+// Helper function to remove a set from DOM (for rollback scenarios)
+function removeSetFromDOM(setId) {
+  const setElement = document.getElementById(`set-${setId}`);
+  if (setElement) {
+    const parentBox = setElement.closest(".exercise-box");
+    const setParagraphs = parentBox.querySelectorAll('.setListing');
+
+    if (setParagraphs.length === 1) {
+      // This was the only set, remove the entire exercise box
+      parentBox.remove();
+      
+      // Remove from currentWorkout state
+      currentWorkout.workout = currentWorkout.workout.filter(e => e.exercise !== currentExercise);
+      
+      // Check if we need to show the main screen
+      const remainingBoxes = document.querySelectorAll('.exercise-box');
+      if (remainingBoxes.length === 0) {
+        document.querySelector("main").style.display = "flex";
+      }
+    } else {
+      // Remove just this set
+      setElement.remove();
+      
+      // Remove from currentWorkout state
+      currentWorkout.workout.forEach(exerciseEntry => {
+        if (exerciseEntry.exercise === currentExercise) {
+          exerciseEntry.sets = exerciseEntry.sets.filter(set => set.id !== setId);
+        }
+      });
+      
+      // Renumber remaining sets
+      const remaining = parentBox.querySelectorAll('.setListing');
+      remaining.forEach((p, index) => {
+        const delBtn = p.querySelector("button");
+        const text = p.textContent.replace("-", "").trim();
+        const parts = text.split(":");
+        if (parts.length >= 2) {
+          const rest = parts.slice(1).join(":").trim();
+          p.innerHTML = `${index + 1}: ${rest}`;
+          p.appendChild(delBtn);
+        }
+      });
+    }
+  }
+}
+function addSetToDOM(exerciseName, exerciseId, newSet, setId) {
+  const container = document.getElementById("exerciseSummaryContainer");
+  
+  // Hide main if it's visible
+  const mainElement = document.querySelector("main");
+  if (mainElement) mainElement.style.display = "none";
+
+  // Look for existing exercise box
+  let existingBox = container.querySelector(`[data-exercise="${exerciseName}"]`);
+  
+  if (existingBox) {
+    // Exercise box exists, add new set to it
+    const setParagraphs = existingBox.querySelectorAll('.setListing');
+    const nextSetNumber = setParagraphs.length + 1;
+    
+    // Create the new set element with the actual ID from database
+    const setWithId = { ...newSet, id: setId };
+    const setElement = createSetElement(setWithId, nextSetNumber, exerciseName);
+    
+    existingBox.appendChild(setElement);
+  } else {
+    // No existing box, create new one
+    const entry = {
+      exercise: exerciseName,
+      exercise_id: exerciseId,
+      sets: [{ ...newSet, id: setId }]
+    };
+    
+    const box = createExerciseBox(entry);
+    const setElement = createSetElement({ ...newSet, id: setId }, 1, exerciseName);
+    box.appendChild(setElement);
+    
+    container.appendChild(box);
+  }
+  
+  // Update currentWorkout state
+  let exerciseEntry = currentWorkout.workout.find(e => e.exercise === exerciseName);
+  if (!exerciseEntry) {
+    exerciseEntry = {
+      exercise: exerciseName,
+      exercise_id: exerciseId,
+      sets: []
+    };
+    currentWorkout.workout.push(exerciseEntry);
+  }
+  exerciseEntry.sets.push({ ...newSet, id: setId });
+}
+
 //Logic for saving a set in the set entry menu
 const saveSetBtn = document.querySelector('#saveSet');
-let isSaving = false; //Temporary bandaid for DOM updating bug when save is clicked multiple times quickly.
 document.querySelector('#saveSet').addEventListener('click', async () => {
-  if (isSaving) return; //Prevent multiple clicks. Part of temporary bandaid
-  isSaving = true;
-  saveSetBtn.disabled = true;
-  //Get values from input fields
   const reps = document.querySelector('#repsInput').value.trim();
   const weight = document.querySelector('#weightInput').value.trim();
 
-  //Validate weight and reps values
   console.log("Trying to save:", { reps, weight, currentExercise, currentExerciseId });
-  if (!reps || !weight || !currentExercise || !currentExerciseId) return;
+  if (!reps || !weight || !currentExercise || !currentExerciseId) {
+    return;
+  }
   if (reps <= 0 || weight < 0) {
     showToast("Please enter valid values");
     return;
   }
 
-  //Check if selected exercise already exists in currentWorkout. If it doesn't push the exercise into currentWorkout.
-  let exerciseEntry = currentWorkout.workout.find(e => e.exercise === currentExercise);
-  if (!exerciseEntry) {
-    exerciseEntry = {
-      exercise: currentExercise,
-      sets: [],
-    };
-    currentWorkout.workout.push(exerciseEntry); //Placement is the possible cause of bug. Investigate later
-  }
+  // Create optimistic set with temporary ID
+  const tempId = `temp-${Date.now()}-${Math.random()}`;
+  const newSet = { weight: Number(weight), reps: Number(reps) };
 
-  //Inserts the set into currentWorkout
-  exerciseEntry.sets.push({ reps: Number(reps), weight: Number(weight) }); //Placement is the possible cause of bug. Investigate later
+  // Immediately update the UI (optimistic update)
+  addSetToDOM(currentExercise, currentExerciseId, newSet, tempId);
+  showToast(`Set Saved!`);
 
-  //Adds the set to the database (see server.js) for more details.
+  // Save to backend asynchronously
   try {
     const res = await fetch('/api/saveWorkout', {
       method: 'POST',
@@ -141,32 +378,41 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
         workout: [{
           exercise: currentExercise,
           exercise_id: currentExerciseId,
-          sets: [{ weight: Number(weight), reps: Number(reps) }]
+          sets: [newSet]
         }]
       })
     });
-	showToast(`Set Saved!`);
-    clearTimeout(displayTimeoutId);
-    displayTimeoutId = setTimeout(() => {
-    displayTodaysWorkout();
-    }, 50);
-    setTimeout(() => {
-    isSaving = false;
-    saveSetBtn.disabled = false;
-    }, 50);
+
     if (!res.ok) {
       throw new Error('Failed to save workout');
-	}
-    } catch (err) {
-      console.error('Failed to send new set:', err);
+    }
+
+    // Get the real set ID from the database
+    const latestSetRes = await fetch(`/api/getLatestSet?exercise_id=${currentExerciseId}&date=${currentWorkout.date}`, {
+      credentials: 'include'
+    });
     
-	}
+    if (latestSetRes.ok) {
+      const latestSetData = await latestSetRes.json();
+      const realSetId = latestSetData.setId;
+      
+      // Update the temporary ID with the real one
+      updateSetId(tempId, realSetId);
+    }
+
+  } catch (err) {
+    console.error('Failed to send new set:', err);
+    
+    // Rollback: Remove the optimistically added set
+    removeSetFromDOM(tempId);
+    showToast("Save failed - set removed");
+  }
 });
 
 //Draws the entire day's workout on the DOM
 async function displayTodaysWorkout() {
-  const container = document.getElementById("exerciseSummaryContainer"); //will hold all workout info visually
-  container.innerHTML = ""; //clears container prior to use
+  const container = document.getElementById("exerciseSummaryContainer");
+  container.innerHTML = "";
 
   const dateKey = selectedDate.toISOString().split("T")[0];
 
@@ -176,15 +422,16 @@ async function displayTodaysWorkout() {
     });
     const result = await response.json();
 
-    if (!result.workout || result.workout.length === 0) { //If no workouts on this date, display <main>
+    if (!result.workout || result.workout.length === 0) {
       document.querySelector("main").style.display = "flex";
       return;
     }
+    
     currentWorkout.date = dateKey;
     currentWorkout.workout = result.workout.map(e => ({
-	exercise_id: e.exercise_id,
-    exercise: e.exercise,
-    sets: [...e.sets]
+      exercise_id: e.exercise_id,
+      exercise: e.exercise,
+      sets: [...e.sets]
     }));
   } catch (err) {
     console.error("Failed to fetch workout from DB:", err);
@@ -193,149 +440,23 @@ async function displayTodaysWorkout() {
     return;
   }
 
- 
   const mainElement = document.querySelector("main");
   if (mainElement) mainElement.style.display = "none";
 
-  
   currentWorkout.workout.forEach(entry => {
-    const box = document.createElement("div");
-	box.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.5)";
-	box.style.background = "#313333";
-    box.classList.add("exercise-box");
-
-    const headingContainer = document.createElement("div");
-	headingContainer.style.display = "flex";
-	headingContainer.style.alignItems = "center";
-	headingContainer.style.justifyContent = "space-between";
-
-	const heading = document.createElement("h3");
-	heading.textContent = entry.exercise;
-	heading.className = "workoutBoxHeading";
-	heading.style.margin = "0";
-	heading.style.color = "white";
-	heading.style.textDecoration = "underline";
-
-	const addSetBtn = document.createElement("img");
-	addSetBtn.style.border = "none";
-	addSetBtn.style.padding = "2px 8px";
-	addSetBtn.style.cursor = "pointer";
-	addSetBtn.src = "../media/images/whiteplussign.jpg";
-	addSetBtn.style.height = "3.5vh";
-	addSetBtn.title = `Add a new set of ${entry.exercise}.`
-    addSetBtn.addEventListener("click", () => {
-	currentExercise = entry.exercise;
-	currentExerciseId = entry.exercise_id;
-
-	// Use the currently selected date, not today's date
-	const dateText = selectedDate.toISOString().split("T")[0];
-	currentWorkout.date = dateText;
-
-	document.querySelector(".modal").style.display = "flex";
-
-	document.getElementById("bodyPartSelect").style.display = "none";
-	document.getElementById("exerciseSelect").style.display = "none";
-	document.getElementById("repsForm").style.display = "block";
-
-	document.getElementById("exerciseHeading").textContent = entry.exercise;
-	});
-
-	headingContainer.appendChild(heading);
-	headingContainer.appendChild(addSetBtn);
-	box.appendChild(headingContainer);
+    const box = createExerciseBox(entry);
 
     let setCount = 1;
-
-	entry.sets.sort((a, b) => a.id - b.id);
+    entry.sets.sort((a, b) => a.id - b.id);
     entry.sets.forEach((set, setIndex) => {
-      const p = document.createElement("p");
-      const formattedWeight = Number(set.weight) % 1 === 0
-	  ? Number(set.weight).toFixed(0)
-	  : Number(set.weight).toFixed(1);
-
-      p.id = `set-${set.id}`;
-      p.textContent = `${setCount}: ${formattedWeight}lbs, ${set.reps} reps`;
-	  p.style.color = "white";
-	  p.className = "setListing";
-
-      const delBtn = document.createElement("button");
-      delBtn.textContent = "-";
-      delBtn.style.marginLeft = "8px";
-	  delBtn.style.backgroundColor = "red";
-	  delBtn.style.color = "white";
-	  delBtn.style.border = "none";
-	  delBtn.style.padding = "1px 4px";
-	  delBtn.style.fontSize = "10px";
-	  delBtn.style.lineHeight = "1";
-	  delBtn.style.borderRadius = "2px";
-	  delBtn.style.cursor = "pointer";
-      delBtn.title = "Delete this set";
-
-      delBtn.addEventListener("click", async () => {
-        const setId = set.id;
-
-        if (!setId) {
-          console.error("No set ID found, cannot delete.");
-          return;
-        }
-
-        try {
-          const res = await fetch(`/api/deleteSet/${setId}`, {
-            method: 'DELETE',
-            credentials: 'include'
-        });
-
-        if (!res.ok) {
-          throw new Error('Failed to delete set from database');
-        }
-
-        showToast("Set deleted!");
-
-      // Refresh display to re-fetch updated workout with correct set ordering
-        const setElement = document.getElementById(`set-${setId}`);
-		if (setElement) {
-	const parentBox = setElement.closest(".exercise-box");
-	const setParagraphs = parentBox.querySelectorAll('.setListing');
-
-	if (setParagraphs.length === 1) {
-		parentBox.remove();
-		const remainingBoxes = document.querySelectorAll('.exercise-box');
-		if (remainingBoxes.length === 0) {
-		document.querySelector("main").style.display = "flex";
-	}
-	} else {
-		setElement.remove();
-		const remaining = parentBox.querySelectorAll('.setListing');
-		remaining.forEach((p, index) => {
-			const delBtn = p.querySelector("button");
-			const text = p.textContent.replace("-", "").trim();
-			const parts = text.split(":");
-			if (parts.length >= 2) {
-				const rest = parts.slice(1).join(":").trim();
-				p.innerHTML = `${index + 1}: ${rest}`;
-				p.appendChild(delBtn);
-			}
-		});
-	}
-}
-		
-
-        } catch (err) {
-          console.error("Delete failed:", err);
-          showToast("Delete failed");
-        }
-      });
-
-      p.appendChild(delBtn);
-      box.appendChild(p);
+      const setElement = createSetElement(set, setCount, entry.exercise);
+      box.appendChild(setElement);
       setCount++;
     });
 
-    container.appendChild(box); 
+    container.appendChild(box);
   });
 }
-  
-  
   
 document.getElementById('addExBtn').addEventListener('click', async () => {
 	const exerciseToAdd = document.getElementById('exName').value.trim();
@@ -412,7 +533,6 @@ async function initializeExerciseCache() {
     const data = await res.json();
     exerciseCache.all = data.exercises;
 
-    // Organize by body part
     exerciseCache.byBodyPart = {};
     for (const ex of data.exercises) {
       if (!exerciseCache.byBodyPart[ex.body_part]) {
@@ -436,11 +556,7 @@ function showToast(message) {
   }, 2000); 
 }
 
-
-
-
 //Form Openers and Closers
-
 document.getElementById("addEx").addEventListener("click", () => {
   document.querySelector('#bodyPartSelect').style.display = 'none';
   document.querySelector('#addExForm').style.display = 'block';
@@ -450,7 +566,6 @@ document.getElementById('backToMuscleGroups').addEventListener('click', () => {
 	document.querySelector('#bodyPartSelect').style.display = 'block';
 	document.querySelector('#addExForm').style.display = 'none';
 });
-	
 	
 document.querySelectorAll('.body-part').forEach(item => {
 	item.addEventListener('click', async () => {
@@ -463,15 +578,15 @@ document.querySelectorAll('.body-part').forEach(item => {
 		setTimeout(() => {
 			bodyPartSelect.style.display = 'none';
 			bodyPartSelect.classList.remove('fade-out');
-		}, 400); // Match CSS animation duration
+		}, 400);
 	});
 });
 
-document.querySelector('#backButton').addEventListener('click', () => { //Back button leading from the exercise select menu to the body part select menu
+document.querySelector('#backButton').addEventListener('click', () => {
   document.querySelector('#exerciseSelect').style.display = 'none';
   document.querySelector('#bodyPartSelect').style.display = 'block';
 });
-document.querySelector('#backToExercises').addEventListener('click', () => { //Back button leading from the set entry form to the exercise select menu
+document.querySelector('#backToExercises').addEventListener('click', () => {
   document.querySelector('#repsForm').style.display = 'none';
   document.querySelector('#exerciseSelect').style.display = 'block';
 });
@@ -489,13 +604,8 @@ document.querySelector('.hamburger').addEventListener('click', () => {
   document.querySelector('.burger-menu').classList.toggle('open');
 });
 
-
-
-
-
-
 //Calendar Functionality
-document.querySelector('#calendar').addEventListener('click', () => {	//Calendar icon
+document.querySelector('#calendar').addEventListener('click', () => {
   document.querySelector('#bodyPartSelect').style.display = 'none';
   document.querySelector('#calendarWindow').style.display = 'flex';
   document.querySelector('.modal').style.display = 'flex';
@@ -528,7 +638,7 @@ function updateDateDisplay() {
   tomorrow.setDate(today.getDate() + 1);
 
   const selected = new Date(selectedDate);
-  selected.setHours(12, 0, 0, 0); // normalize
+  selected.setHours(12, 0, 0, 0);
 
   if (selected.toDateString() === today.toDateString()) {
     display.textContent = "Today";
@@ -553,8 +663,6 @@ document.getElementById("arrowRight").addEventListener("click", () => {
   displayTodaysWorkout();
 });
 
-
-
 //Logout button
 document.getElementById('logoutButton').addEventListener('click', async () => {
   try {
@@ -563,7 +671,6 @@ document.getElementById('logoutButton').addEventListener('click', async () => {
       credentials: 'include'
     });
 
-    // Redirect to login page
     window.location.href = '../login';
   } catch (err) {
     alert('Logout failed. Please try again.');

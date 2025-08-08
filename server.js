@@ -125,6 +125,44 @@ app.get('/api/getWorkout', async (req, res) => {
   }
 });
 
+app.get('/api/getLatestSet', async (req, res) => {
+  const userId = req.session.user?.id;
+  const { exercise_id, date } = req.query;
+
+  if (!userId || !exercise_id || !date) {
+    return res.status(400).json({ message: 'Missing required parameters' });
+  }
+
+  try {
+    // Get the workout ID for the date
+    const workoutResult = await db.query(
+      'SELECT id FROM workouts WHERE user_id = $1 AND date = $2',
+      [userId, date]
+    );
+
+    if (workoutResult.rows.length === 0) {
+      return res.status(404).json({ message: 'No workout found for this date' });
+    }
+
+    const workoutId = workoutResult.rows[0].id;
+
+    // Get the most recently added set for this exercise
+    const setResult = await db.query(
+      'SELECT id FROM sets WHERE workout_id = $1 AND exercise_id = $2 ORDER BY id DESC LIMIT 1',
+      [workoutId, exercise_id]
+    );
+
+    if (setResult.rows.length === 0) {
+      return res.status(404).json({ message: 'No sets found for this exercise' });
+    }
+
+    res.json({ setId: setResult.rows[0].id });
+  } catch (err) {
+    console.error('Error getting latest set:', err);
+    res.status(500).json({ message: 'Failed to get latest set' });
+  }
+});
+
 //Signup functionality
 app.post('/api/signup', async (req, res) => {
   const { username, email, password } = req.body; //gets username, password, email from request

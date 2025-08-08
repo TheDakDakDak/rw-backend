@@ -13,9 +13,10 @@
 	margin-right: 5vw;
 }
 
-main > h2 {
-	font-size: 3.5vw;
+main > div > h2 {
+	font-size: 4vw;
 }
+
 
 #modalWindow {
 	width: 92vw;
@@ -29,17 +30,17 @@ h2 + p {
 	width: 92vw;
 }
 
-#close, #close2 {
-	width: 4vw;
-	margin: 3vw 3vw 0 0;
-	align-self: flex-end;
-}
-
 .workoutBoxHeading {
 	font-size: 2vh;
 }
 
 .setListing {
 	font-size: 1.75vh;
+}
+
+.close, .close2 {
+	width: 5vw;
+	margin: 3vw 3vw 0 0;
+	align-self: flex-end;
 }
 }
