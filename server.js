@@ -47,7 +47,6 @@ app.get('/api/session', (req, res) => {
 });
 
 app.get('/api/getUserInfo', async (req, res) => {
-  console.log("GET /api/getUserInfo called");
   if (!req.session.user) {
     return res.status(401).json({ message: 'Not authenticated' });
   }
@@ -434,6 +433,6 @@ app.delete('/api/deleteSet/:id', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0' () => {
   console.log(`Server running on port ${PORT}`);
 });

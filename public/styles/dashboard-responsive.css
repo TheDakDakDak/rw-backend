@@ -26,6 +26,21 @@ h2 + p {
 	font-size: 80%;
 }
 
+#noExAdded {
+	text-align: center;
+	margin-left: 20vw;
+	margin-right: 20vw;
+}
+
+#backButton {
+	margin-left: 20vw;
+}
+
+h3 {
+	text-align: center;
+	text-decoration: underline;
+}
+
 #calendarWindow {
 	width: 92vw;
 }

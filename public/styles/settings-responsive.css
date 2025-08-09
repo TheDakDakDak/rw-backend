@@ -1,0 +1,35 @@
+@media screen and (max-width:500px) {
+h5 {
+	text-decoration: underline;
+}
+
+span {
+	font-size: 1.5vh;
+}
+
+.beforeInput {
+	display: block;
+}
+
+#usernameBox {
+	height: 21.5vh;
+}
+
+#emailBox {
+	height: 23.5vh;
+}
+
+#passwordBox {
+	height: 29.5vh;
+}
+
+#goback {
+	width: 3.5vw;
+	margin-right: 18vw;
+}
+
+#saveUsername, #savePassword, #saveEmail {
+	color: black;
+	border-color: black;
+}
+}

@@ -64,6 +64,10 @@ function showExercises(part) {
   const theExercises = exerciseCache.byBodyPart[part] || [];
   const exerciseList = document.querySelector('#exerciseList'); //The DOM's <ul> for exercises
   exerciseList.innerHTML = ""; //Start from an empty <ul>
+  
+  if(theExercises.length === 0) {
+	  document.getElementById('noExAdded').style.display = 'block';
+  }
 
   theExercises
     .sort((a, b) => a.name.localeCompare(b.name))
@@ -152,7 +156,7 @@ function createSetElement(set, setNumber, exerciseName) {
     : Number(set.weight).toFixed(1);
 
   p.id = set.id ? `set-${set.id}` : `set-temp-${Date.now()}`;
-  p.textContent = `${setNumber}: ${formattedWeight}lbs, ${set.reps} reps`;
+  p.textContent = `${setNumber}: ${formattedWeight}lbs --- (${set.reps} reps)`;
   p.style.color = "white";
   p.className = "setListing";
 
@@ -306,6 +310,8 @@ function addSetToDOM(exerciseName, exerciseId, newSet, setId) {
   // Look for existing exercise box
   let existingBox = container.querySelector(`[data-exercise="${exerciseName}"]`);
   
+  let setElement;
+  
   if (existingBox) {
     // Exercise box exists, add new set to it
     const setParagraphs = existingBox.querySelectorAll('.setListing');
@@ -313,7 +319,7 @@ function addSetToDOM(exerciseName, exerciseId, newSet, setId) {
     
     // Create the new set element with the actual ID from database
     const setWithId = { ...newSet, id: setId };
-    const setElement = createSetElement(setWithId, nextSetNumber, exerciseName);
+    setElement = createSetElement(setWithId, nextSetNumber, exerciseName);
     
     existingBox.appendChild(setElement);
   } else {
@@ -325,11 +331,17 @@ function addSetToDOM(exerciseName, exerciseId, newSet, setId) {
     };
     
     const box = createExerciseBox(entry);
-    const setElement = createSetElement({ ...newSet, id: setId }, 1, exerciseName);
+    setElement = createSetElement({ ...newSet, id: setId }, 1, exerciseName);
     box.appendChild(setElement);
     
     container.appendChild(box);
   }
+  
+  setElement.classList.add('new-set-highlight');
+  
+  setTimeout(() => {
+	  setElement.classList.remove('new-set-highlight');
+  }, 1100);
   
   // Update currentWorkout state
   let exerciseEntry = currentWorkout.workout.find(e => e.exercise === exerciseName);
@@ -358,6 +370,9 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
     showToast("Please enter valid values");
     return;
   }
+  
+  const modal = document.querySelector('.modal');
+  modal.style.opacity = '0';
 
   // Create optimistic set with temporary ID
   const tempId = `temp-${Date.now()}-${Math.random()}`;
@@ -366,6 +381,10 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
   // Immediately update the UI (optimistic update)
   addSetToDOM(currentExercise, currentExerciseId, newSet, tempId);
   showToast(`Set Saved!`);
+  
+  setTimeout(() => {
+	  modal.style.opacity = '1';
+  }, 1000);
 
   // Save to backend asynchronously
   try {
@@ -402,6 +421,7 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
     // Rollback: Remove the optimistically added set
     removeSetFromDOM(tempId);
     showToast("Save failed - set removed");
+	modal.style.opacity = '1';
   }
 });
 
@@ -561,6 +581,7 @@ document.getElementById("addEx").addEventListener("click", () => {
 document.getElementById('backToMuscleGroups').addEventListener('click', () => {
 	document.querySelector('#bodyPartSelect').style.display = 'block';
 	document.querySelector('#addExForm').style.display = 'none';
+	document.getElementById('noExAdded').style.display = 'none';
 });
 	
 document.querySelectorAll('.body-part').forEach(item => {
@@ -581,10 +602,12 @@ document.querySelectorAll('.body-part').forEach(item => {
 document.querySelector('#backButton').addEventListener('click', () => {
   document.querySelector('#exerciseSelect').style.display = 'none';
   document.querySelector('#bodyPartSelect').style.display = 'block';
+  document.getElementById('noExAdded').style.display = 'none';
 });
 document.querySelector('#backToExercises').addEventListener('click', () => {
   document.querySelector('#repsForm').style.display = 'none';
   document.querySelector('#exerciseSelect').style.display = 'block';
+  document.getElementById('noExAdded').style.display = 'none';
 });
 
 document.querySelectorAll('.close').forEach(closeBtn => {
@@ -593,6 +616,7 @@ document.querySelectorAll('.close').forEach(closeBtn => {
     document.querySelector('#calendarWindow').style.display = 'none';
 	document.getElementById('addExForm').style.display = 'none';
 	document.querySelector('#repsForm').style.display = 'none';
+	document.getElementById('noExAdded').style.display = 'none';
   });
 });
 
