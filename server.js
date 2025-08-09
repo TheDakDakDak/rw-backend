@@ -374,22 +374,28 @@ app.post('/api/saveWorkout', async (req, res) => {
       workoutId = result.rows[0].id;
     }
 
-    // Step 2: Save sets for each exercise
+    // Step 2: Save sets for each exercise and collect the new set IDs
+    const savedSetIds = [];
     for (const entry of workout) {
       const { exercise_id, sets } = entry;
       if (!exercise_id) continue;
       for (let i = 0; i < sets.length; i++) {
         const { weight, reps } = sets[i];
 		
-        await client.query(
+        const setResult = await client.query(
           `INSERT INTO sets (workout_id, exercise_id, weight, reps, set_order)
-           VALUES ($1, $2, $3, $4, $5)`,
+           VALUES ($1, $2, $3, $4, $5) RETURNING id`,
           [workoutId, exercise_id, weight, reps, i + 1]
         );
+        savedSetIds.push(setResult.rows[0].id);
       }
     }
+    
     await client.query('COMMIT');
-    res.json({ message: 'Workout saved successfully' });
+    res.json({ 
+      message: 'Workout saved successfully',
+      setIds: savedSetIds
+    });
   } catch (err) {
     await client.query('ROLLBACK');
 	console.error("Error during saving workout set:", err.message);

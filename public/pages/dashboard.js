@@ -387,14 +387,10 @@ document.querySelector('#saveSet').addEventListener('click', async () => {
       throw new Error('Failed to save workout');
     }
 
-    // Get the real set ID from the database
-    const latestSetRes = await fetch(`/api/getLatestSet?exercise_id=${currentExerciseId}&date=${currentWorkout.date}`, {
-      credentials: 'include'
-    });
-    
-    if (latestSetRes.ok) {
-      const latestSetData = await latestSetRes.json();
-      const realSetId = latestSetData.setId;
+    // Get the real set ID from the response
+    const responseData = await res.json();
+    if (responseData.setIds && responseData.setIds.length > 0) {
+      const realSetId = responseData.setIds[0]; // First (and only) set ID
       
       // Update the temporary ID with the real one
       updateSetId(tempId, realSetId);
