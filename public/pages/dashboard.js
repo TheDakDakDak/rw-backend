@@ -160,16 +160,13 @@ function createSetElement(set, setNumber, exerciseName) {
   p.style.color = "white";
   p.className = "setListing";
 
-  const delBtn = document.createElement("button");
-  delBtn.textContent = "-";
+  const delBtn = document.createElement("img");
   delBtn.style.marginLeft = "8px";
-  delBtn.style.backgroundColor = "red";
-  delBtn.style.color = "white";
+  delBtn.src = "../media/images/whiteminussign.png";
   delBtn.style.border = "none";
-  delBtn.style.padding = "1px 4px";
-  delBtn.style.fontSize = "10px";
+  delBtn.style.height = "3vh";
+  delBtn.style.verticalAlign = "middle";
   delBtn.style.lineHeight = "1";
-  delBtn.style.borderRadius = "2px";
   delBtn.style.cursor = "pointer";
   delBtn.title = "Delete this set";
 
