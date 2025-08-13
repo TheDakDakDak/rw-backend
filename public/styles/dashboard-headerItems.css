@@ -9,7 +9,7 @@ header { /*Top Black Header*/
 
 section { /*Second Dark Gray Header*/
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	width: 100vw;
 	height: 5vh;
 	background: #313333;
@@ -19,11 +19,13 @@ section { /*Second Dark Gray Header*/
 
 #todayContainer { /*Holds "Today", both direction arrows, and the calendar icon*/
 	display: flex;
+	width: 100vw;
 	justify-content: flex-start;
 	align-items: center;
 	margin-left: 1vw;
 	background: #313333;
 }
+
 #logoContainer { /*Holds the logo and the "Rainstorm Weights" text*/
 	display: flex;
 	justify-content: flex-start;
@@ -55,14 +57,26 @@ section { /*Second Dark Gray Header*/
 #today { /*"Today" text*/
 	color: white;
 	font-weight: bold;
-	margin: 0 2vw 0 2vw;
+	margin-right: 1vw;
 }
 
 
 #arrowLeft, #arrowRight { /*Arrows next to "Today"*/
 	color: white;
-	font-size: 15px;
+	font-size: 20px;
 	font-weight: bold;
+}
+
+#arrowLeftContainer, #arrowRightContainer {
+	display: flex;
+	width: 3.25vw;
+}
+
+#todayAndCalendar {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 93.5vw;
 }
 
 #arrowLeft:hover, #arrowRight:hover, #calendar:hover {
@@ -71,7 +85,6 @@ section { /*Second Dark Gray Header*/
 
 #calendar { /*Calendar icon*/
 	height: 3vh;
-	margin-left: 1vw;
 }
 
 .hamburger {
