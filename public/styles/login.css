@@ -1,3 +1,8 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
 body {
 	display: flex;
 	justify-content: center;
@@ -14,7 +19,6 @@ main {
 	align-items: center;
 	width: 40vw;
 	height: 60vh;
-	padding-top: 0;
 }
 
 h1 {
@@ -23,6 +27,7 @@ h1 {
 	font-size: 32px;
 	font-weight: bold;
 	margin-top: 0;
+	margin-bottom: 3vh;
 }
 
 form {
@@ -33,19 +38,12 @@ form {
 	gap: 8px;
 }
 
-.inputField {
-	width: 100%;
+input {
+	font-size: 16px;
 }
 
 #submitButton:hover {
 	cursor: pointer;
-}
-
-#notImplemented {
-	display: none;
-	width: 70%;
-	margin-left: 10%;
-	color: red;
 }
 
 #submitButton {
