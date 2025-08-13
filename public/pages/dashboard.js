@@ -29,6 +29,7 @@ let exerciseCache = {
 
 let currentExercise = null;
 let currentExerciseId = null;
+let currentBodyPart = null;
 
 //Main App Functionality
 window.addEventListener("DOMContentLoaded", () => {
@@ -61,6 +62,7 @@ document.querySelectorAll('.body-part').forEach(item => {
 });
 
 function showExercises(part) {
+  currentBodyPart = part;
   const theExercises = exerciseCache.byBodyPart[part] || [];
   const exerciseList = document.querySelector('#exerciseList'); //The DOM's <ul> for exercises
   exerciseList.innerHTML = ""; //Start from an empty <ul>
@@ -130,6 +132,11 @@ function createExerciseBox(entry) {
   addSetBtn.addEventListener("click", () => {
     currentExercise = entry.exercise;
     currentExerciseId = entry.exercise_id;
+	
+	const exercise = exerciseCache.all.find(ex => ex.id === entry.exercise_id);
+	if(exercise) {
+		currentBodyPart = exercise.body_part;
+	}
 
     const dateText = selectedDate.toISOString().split("T")[0];
     currentWorkout.date = dateText;
@@ -603,7 +610,13 @@ document.querySelector('#backButton').addEventListener('click', () => {
 });
 document.querySelector('#backToExercises').addEventListener('click', () => {
   document.querySelector('#repsForm').style.display = 'none';
-  document.querySelector('#exerciseSelect').style.display = 'block';
+  
+  if(currentBodyPart) {
+	  showExercises(currentBodyPart);
+  } else {
+	document.querySelector('#exerciseSelect').style.display = 'none';
+	document.querySelector('#bodyPartSelect').style.display = 'block';
+  }
   document.getElementById('noExAdded').style.display = 'none';
 });
 

@@ -13,6 +13,18 @@
 	margin-right: 5vw;
 }
 
+main {
+	height: 88svh;
+}
+
+header {
+	height: 7svh;
+}
+
+section {
+	height: 5svh;
+}
+
 main > div > h2 {
 	font-size: 4vw;
 }
@@ -61,5 +73,10 @@ input {
 	width: 5vw;
 	margin: 3vw 3vw 0 0;
 	align-self: flex-end;
+}
+
+#exName {
+	display: block;
+	width: 80% !important;
 }
 }
