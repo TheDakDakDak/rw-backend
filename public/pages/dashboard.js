@@ -214,7 +214,7 @@ function createSetElement(set, setNumber, exerciseName) {
           setElement.remove();
           const remaining = parentBox.querySelectorAll('.setListing');
           remaining.forEach((p, index) => {
-            const delBtn = p.querySelector("button");
+            const delBtn = p.querySelector("img");
             const text = p.textContent.replace("-", "").trim();
             const parts = text.split(":");
             if (parts.length >= 2) {
