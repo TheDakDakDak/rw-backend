@@ -481,6 +481,8 @@ async function displayTodaysWorkout() {
 document.getElementById('addExBtn').addEventListener('click', async () => {
 	const exerciseToAdd = document.getElementById('exName').value.trim();
 	const mgOfExercise = document.getElementById('exMg').value;
+	document.getElementById('exName').value = "";
+	document.getElementById('exMg').value = "";
 	if(!exerciseToAdd) {
 		alert("Please enter an exercise name.");
 		return;
@@ -701,7 +703,7 @@ document.getElementById('logoutButton').addEventListener('click', async () => {
       credentials: 'include'
     });
 
-    window.location.href = '../login';
+    window.location.href = '../login';window.location.href = '../login';
   } catch (err) {
     alert('Logout failed. Please try again.');
   }
