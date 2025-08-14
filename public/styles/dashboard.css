@@ -251,3 +251,7 @@ h2 + p {
 .new-set-highlight {
   color: #f7cd16 !important;
 }
+
+#toAnalytics {
+	color: gray;
+}

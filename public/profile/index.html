@@ -5,53 +5,34 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1">
 	<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@100..900&family=Krona+One&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="../styles/profile.css">
-	<link rel="stylesheet" href="../styles/settings-responsive.css">
 	<title>Rainstorm Weights</title>
 </head>
 <body>
-	<h3><a href="../dashboard"><img id="goback" src="../media/images/blackbackbutton.jpg"></a>Settings</h3>
-	<div id="usernameBox" class="boxes">
-		<h5>Change Username</h5>
-		<span>Current Username:</span>
-		<span id="currentUsername"><i></i></span>
-		<form>
-			<span class="beforeInput">New Username:</span>
-			<input id="newUsername" type="text" placeholder="Change username">
-		</form>
-		<form class="buttonForm">
-			<input id="saveUsername" type="button" value="Save Changes">
-		</form>
-	</div>
-	<div id="emailBox" class="boxes">
-		<h5>Change Email</h5>
-		<span>Current Email:</span>
-		<span id="currentEmail"><i></i></span>
-		<form>
-			<span class="beforeInput">New Email:</span>
-			<input id="newEmail" type="email" placeholder="Change email">
-		</form>
-		<form class="buttonForm">
-			<input id="saveEmail" type="button" value="Save Changes">
-		</form>
-	</div>
-	<div id="passwordBox" class="boxes">
-		<h5>Change Password</h5>
-		<form>
-			<span class="beforeInput">Current Password:</span>
-			<input id="currentPassword" type="password" placeholder="Current password">
-		</form>
-		<form>
-			<span class="beforeInput">New Password:</span>
-			<input id="newPassword" type="password" placeholder="New password">
-		</form>
-		<form>
-			<span class="beforeInput">Confirm Password:</span>
-			<input id="confirmPassword" type="password" placeholder="Confirm new password">
-		</form>
-		<form class="buttonForm">
-			<input id="savePassword" type="button" value="Save Changes">
-		</form>
-	</div>
-	<script type="text/javascript" src="../pages/profile.js"></script>
+<img id="backFromProfile" src='../media/images/blackbackbutton.jpg'>
+<h2 id="profileUsername"></h2>
+<p>Total Workouts:</p>
+<span id="profileWorkouts"></span>
+<p>Total Sets:</p>
+<span id="profileSets"></span>
+<p>Total Reps:</p>
+<span id="profileReps"></span>
+<p>Total Volume:</p>
+<span id="profileVolume"></span>
+<br>
+<script type="text/javascript" src="../pages/profile.js"></script>
+<script>
+(async () => {
+  const response = await fetch('/api/getProfileInfo', {
+    credentials: 'include'
+  });
+  const data = await response.json();
+  console.log(data.stats)
+  document.getElementById('profileUsername').innerText = data.stats.username;
+  document.getElementById('profileWorkouts').innerText = Number(data.stats.workoutcount);
+  document.getElementById('profileSets').innerText = Number(data.stats.setcount).toLocaleString();
+  document.getElementById('profileReps').innerText = Number(data.stats.repcount).toLocaleString();
+  document.getElementById('profileVolume').innerText = `${Number(data.stats.volumecount).toLocaleString()} lbs.`;
+})();
+</script>
 </body>
 </html>

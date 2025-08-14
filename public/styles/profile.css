@@ -1,58 +1,33 @@
-body {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	font-family: "Krona One";
+* {
+	margin: 3vh 0 0 0;
+	padding: 0;
 	background: #e2e3dd;
+	font-family: "Krona One";
+	text-align: center;
 }
 
-h3 {
+h2 {
 	text-decoration: underline;
 }
 
-.boxes {
-	border: 2px solid black;
-	width: 80vw;
-	height: 22vh;
-	border-radius: 30px;
-	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-	padding-left: 2vw;
-	margin-bottom: 8px;
+span {
+	display: inline-block;
+	color: #46c53b;
+	width: 25vw;
+	font-size: 5vh;
 }
 
-#passwordBox {
-	height: 26vh;
-}
-
-form {
-	margin-top: 1vh;
-}
-
-#saveUsername, #savePassword, #saveEmail {
+img {
+	height: 3vh;
 	display: block;
-	margin: 0 auto;
-	background: #e2e3dd;
-	padding: 0.8vh;
-	border-radius: 30px;
+	text-align: left;
+	margin-left: 3.2vw;
 }
 
-#saveUsername, #savePassword, #saveEmail:hover {
+#profileVolume {
+	font-size: 3.5vh;
+}
+
+#backFromProfile:hover {
 	cursor: pointer;
-}
-
-#newUsername, #newEmail, #currentPassword, #newPassword, #confirmPassword {
-	border-radius: 30px;
-}
-
-#goback {
-	width: 1.25vw;
-	margin-right: 32vw;
-}
-
-#goback.hover {
-	cursor: pointer;
-}
-
-h3 {
-	margin-right: 32vw;
 }

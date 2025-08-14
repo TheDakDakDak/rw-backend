@@ -68,6 +68,39 @@ app.get('/api/getUserInfo', async (req, res) => {
   }
 });
 
+app.get('/api/getProfileInfo', async (req, res) => {
+	if(!req.session.user) {
+		return res.status(401).json({ message: 'Not authenticated' });
+	}
+	try {
+		const result = await db.query(
+			`SELECT
+			 u.username,
+			 COALESCE(COUNT(DISTINCT w.id), 0) as workoutCount,
+			 COALESCE(COUNT(s.id), 0) as setCount,
+			 COALESCE(SUM(s.reps), 0) as repCount,
+			 COALESCE(SUM(s.reps * s.weight), 0) as volumeCount
+			 FROM users u
+			 LEFT JOIN workouts w ON u.id = w.user_id
+			 LEFT JOIN sets s ON w.id = s.workout_id
+			 WHERE u.id = $1
+			 GROUP BY u.id, u.username`, [req.session.user.id]
+		);
+		
+		res.json({
+			success: true,
+			stats: result.rows[0]
+		});
+	}
+	catch (err) {
+		console.error('Error fetching user stats:', err);
+		res.status(500).json({
+			success: false,
+			message: 'Failed to fetch user statistics'
+		});
+	}
+});
+
 //Testing to ensure backend is running. Unimportant for app functionality.
 //app.get('/', (req, res) => {
 //  res.send('Workout Tracker Backend is running!');

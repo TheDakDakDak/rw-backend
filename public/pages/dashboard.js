@@ -706,3 +706,7 @@ document.getElementById('logoutButton').addEventListener('click', async () => {
     alert('Logout failed. Please try again.');
   }
 });
+
+document.getElementById('toAnalytics').addEventListener('click', () => {
+    showToast("Coming Soon!");
+ });

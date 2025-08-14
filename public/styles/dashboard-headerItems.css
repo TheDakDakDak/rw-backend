@@ -118,6 +118,7 @@ section { /*Second Dark Gray Header*/
 
 .burger-menu a:hover {
   text-decoration: underline;
+  color: #46c53b;
 }
 
 .burger-menu.open {
