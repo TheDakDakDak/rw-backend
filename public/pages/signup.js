@@ -6,7 +6,7 @@ function isValidEmail(email) {
 document.getElementById('submitButton').addEventListener('click', async () => {
   const userName = document.getElementById('signupUsername').value.trim();
   const userPassword = document.getElementById('signupPassword').value;
-  const email = document.getElementById('signupEmail').value.trim();
+  const email = document.getElementById('signupEmail').value.toLowerCase().trim();
   const confirmPassword = document.getElementById('confirmPassword').value;
 
   if (!userName || !userPassword || !email || !confirmPassword) {

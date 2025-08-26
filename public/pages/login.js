@@ -9,7 +9,7 @@ fetch('/api/session', {
 	})
 
 document.getElementById('submitButton').addEventListener('click', async () => {
-	const email = document.getElementById('loginEmail').value.trim();
+	const email = document.getElementById('loginEmail').value.toLowerCase().trim();
 	const userPassword = document.getElementById('loginPassword').value;
 
 	if (!email || !userPassword) {
