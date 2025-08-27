@@ -95,27 +95,35 @@ span {
 details {
 	color: white;
 	margin-bottom: 1vh;
+	width: 100%;
+	text-align: center;
 }
 
 #faqsContainer {
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 	width: 100%;
 	align-items: center;
 	border-bottom: 4px solid #46c53b;
-	height: 70.7vh;
+	min-height: 61.2vh;
+	text-align: center;
+	padding-top: 10vh;
 }
 
 h2 {
 	color: white;
 	font-size: 4vh;
-	text-align: center;
 	margin-top: 0;
 }
 
 p {
 	color: #46c53b;
+}
+
+details > p {
+	width: 75%;
+	margin: 0 auto;
 }
 
 @media screen AND (max-width: 500px) {
@@ -142,9 +150,19 @@ h1 {
 	font-size: 4vw;
 }
 
-@media screen AND (max-width: 500px) {
-summary {
-	width: 70vw;
-	margin-left: 10vw;
+header {
+	height: 10dvh;
+}
+
+nav {
+	height: 5dvh;
+}
+
+footer {
+	height: 8dvh;
+}
+
+#faqsContainer {
+	min-height: 65dvh;
 }
 }
