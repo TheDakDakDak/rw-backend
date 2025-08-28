@@ -255,3 +255,14 @@ h2 + p {
 #toAnalytics {
 	color: gray;
 }
+
+.bounce {
+  animation: bounceEffect 0.6s ease-in-out;
+}
+
+@keyframes bounceEffect {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.05); }
+}

@@ -684,16 +684,69 @@ function updateDateDisplay() {
   }
 }
 
-document.getElementById("arrowLeft").addEventListener("click", () => {
+function goToPreviousDate() {
   selectedDate.setDate(selectedDate.getDate() - 1);
   updateDateDisplay();
   displayTodaysWorkout();
-});
-document.getElementById("arrowRight").addEventListener("click", () => {
+  animateDateChange();
+}
+
+function goToNextDate() {
   selectedDate.setDate(selectedDate.getDate() + 1);
   updateDateDisplay();
   displayTodaysWorkout();
-});
+  animateDateChange();
+}
+
+function animateDateChange() {
+  const dateElement = document.getElementById("today");
+  dateElement.classList.add("bounce");
+  setTimeout(() => {
+    dateElement.classList.remove("bounce");
+  }, 600);
+}
+
+const arrowLeftElement = document.getElementById("arrowLeft");
+const arrowRightElement = document.getElementById("arrowRight");
+arrowLeftElement.addEventListener("click", goToPreviousDate);
+arrowRightElement.addEventListener("click", goToNextDate);
+
+let startX = 0;
+let startY = 0;
+
+document.addEventListener("touchstart", (e) => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+}, { passive: false });
+
+document.addEventListener("touchmove", (e) => {
+  const currentX = e.touches[0].clientX;
+  const currentY = e.touches[0].clientY;
+  
+  const deltaX = Math.abs(startX - currentX);
+  const deltaY = Math.abs(startY - currentY);
+  
+  if (deltaX > deltaY && deltaX > 10) {
+    e.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener("touchend", (e) => {
+  const endX = e.changedTouches[0].clientX;
+  const endY = e.changedTouches[0].clientY;
+  
+  const deltaX = startX - endX;
+  const deltaY = Math.abs(startY - endY);
+  
+  if (Math.abs(deltaX) > 50 && deltaY < 100) {
+    if (deltaX > 0) {
+      goToNextDate();
+    } else {
+      goToPreviousDate();
+    }
+  }
+}, { passive: false });
+
 
 //Logout button
 document.getElementById('logoutButton').addEventListener('click', async () => {
